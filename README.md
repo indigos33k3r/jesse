@@ -7,3 +7,6 @@ Jesse is written in TypeScript and uses Google's TensorflowJS for machine learni
 Here is Jesse's Slack channel, a community for Jesse’s contributors. Join it to receive daily updates of the devlopement process: 
 
 https://join.slack.com/t/jesse-plo4416/shared_invite/enQtNTExOTc3NTU2NDM0LWUzMjMwMjM1MDNjMzY1MGEyMGFlYjM4ZTYzN2U2OTJkNGVmZTYzOWIzNWU3MzZkZDI1YzRhODNjZDkzMjcyYjk.
+
+## Release date
+Jesse's initial release will happen at the early days of February. Click on the watch of the repository. 
