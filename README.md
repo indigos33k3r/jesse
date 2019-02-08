@@ -5,9 +5,11 @@ Jesse is written in TypeScript and uses Google's TensorflowJS for machine learni
 
 ## update February, 8: 
 I have already released 3 repositories: 
-https://github.com/jesse-ai/jesse-cli (Jesse's CLI for easier development)
-https://github.com/jesse-ai/indicators (Jesse's indicators package)
-https://github.com/jesse-ai/docs (Jesse's documentation)
+
+https://github.com/jesse-ai/jesse-cli (Jesse's CLI for easier development)<br>
+https://github.com/jesse-ai/indicators (Jesse's indicators package)<br>
+https://github.com/jesse-ai/docs (Jesse's documentation) <br>
+
 I'm working hard to finish the 3 of them and I push as I code. Once they're done (in a few days from now), I'll update this repository with the latest code. 
 
 ## Roadmap 
