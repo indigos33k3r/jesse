@@ -1,0 +1,12 @@
+{
+  "name": "jesse",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Trades on crypto exchanges. ",
+  "engines": {
+    "node": ">=8.11.3",
+    "npm": "~5.6.0"
+  },
+  "author": "Sully Fischer <fischersully@gmail.com>",
+  "license": "AGPL-3.0-or-later"
+}
