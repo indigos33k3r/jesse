@@ -8,5 +8,11 @@
     "npm": "~5.6.0"
   },
   "author": "Sully Fischer <fischersully@gmail.com>",
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later", 
+  "dependencies": {
+    "@types/node": "^10.12.12",
+    "dotenv": "^6.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
+  }
 }
