@@ -4,13 +4,12 @@ Jesse(the name is taken from of the legendary trader, Jesse Livermore) is a free
 Jesse is written in TypeScript and uses Google's TensorflowJS for machine learning. The ideal goal of this project is to make it easy for everyone to use it with a minimum understanding of AI and just focusing on your trading strategies. 
 
 ## update February, 8: 
-I have already released 3 repositories: 
+I have released 4 repositories so far: 
 
 https://github.com/jesse-ai/jesse-cli (Jesse's CLI for easier development)<br>
 https://github.com/jesse-ai/indicators (Jesse's indicators package)<br>
 https://github.com/jesse-ai/docs (Jesse's documentation) <br>
-
-I'm working hard to finish the 3 of them and I push as I code. Once they're done (in a few days from now), I'll update this repository with the latest code. 
+https://github.com/jesse-ai/notifications-telegram (Telegram driver for notifications) <br>
 
 ## Roadmap 
 If you're interested in knowing the latest progress of Jesse, check out the [roadmap](https://github.com/jesse-ai/jesse/projects/1). 
