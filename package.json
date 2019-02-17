@@ -3,16 +3,60 @@
   "private": true,
   "version": "0.0.1",
   "description": "Trades on crypto exchanges. ",
+  "scripts": {
+    "test": "jest"
+  },
   "engines": {
     "node": ">=8.11.3",
     "npm": "~5.6.0"
   },
+  "jest": {
+    "setupFiles": [
+      "./core/test/setup.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
   "author": "Sully Fischer <fischersully@gmail.com>",
-  "license": "AGPL-3.0-or-later", 
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
+    "@sentry/node": "^4.4.1",
+    "@types/easy-table": "0.0.32",
+    "@types/lodash": "^4.14.119",
+    "@types/moment-timezone": "^0.5.9",
     "@types/node": "^10.12.12",
+    "@types/sleep": "0.0.7",
+    "@types/ws": "^6.0.1",
+    "axios": "^0.18.0",
+    "babel-runtime": "^6.26.0",
+    "chalk": "^2.4.1",
+    "cli-progress": "^2.1.1",
     "dotenv": "^6.2.0",
+    "easy-table": "^1.1.1",
+    "jesse-indicators": "^0.0.5",
+    "jesse-notifications-telegram": "0.0.1",
+    "jsonfile": "^4.0.0",
+    "lodash": "^4.17.11",
+    "mkdirp": "^0.5.1",
+    "moment-timezone": "^0.5.23",
+    "redux": "^4.0.1",
+    "sleep": "^5.2.3",
     "ts-node": "^7.0.1",
     "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.10",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5"
   }
 }
