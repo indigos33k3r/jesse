@@ -291,12 +291,13 @@ export class Jesse {
                             store.getState().mainReducer.currentPrice - store.getState().orders[k].price
                         ) > store.getState().orders[k].trailingPrice
                     ) {
-                        store.getState().orders[k].price =
+                        store.getState().orders[k].updatePrice(
                             store.getState().orders[k].side === 'buy'
-                                ? store.getState().mainReducer.currentPrice +
-                                  store.getState().orders[k].trailingPrice
-                                : store.getState().mainReducer.currentPrice -
-                                  store.getState().orders[k].trailingPrice;
+                            ? store.getState().mainReducer.currentPrice +
+                              store.getState().orders[k].trailingPrice
+                            : store.getState().mainReducer.currentPrice -
+                              store.getState().orders[k].trailingPrice
+                        );
                     }
                 }
             }
