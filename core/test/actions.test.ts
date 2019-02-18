@@ -200,8 +200,9 @@ it('Should create an action to update order quantity', () => {
     expect(actions.updateOrderQuantity(123, 2)).toEqual({
         type: ActionTypes.UPDATE_ORDER_QUANTITY,
         payload: {
-            orderID: 123, 
-            quantity: 2
+            id: 123, 
+            quantity: 2, 
+            time: $.now()
         }
     });
 });

@@ -175,12 +175,13 @@ export function updateOrderPrice(id: number, price: number): ActionInterface {
         }
     };
 }
-export function updateOrderQuantity(orderID: number, quantity: number): ActionInterface {
+export function updateOrderQuantity(id: number, quantity: number): ActionInterface {
     return {
         type: types.UPDATE_ORDER_QUANTITY,
         payload: {
-            orderID, 
-            quantity
+            id, 
+            quantity, 
+            time: ($.isBackTesting() ? (store.getState().mainReducer.currentTime ? store.getState().mainReducer.currentTime : $.now()) : $.now())
         }
     };
 }

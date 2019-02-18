@@ -48,8 +48,12 @@ export function ordersReducer(state: Order[] = [], action?: ActionInterface): Or
             })
         case types.UPDATE_ORDER_QUANTITY:
             return state.map(item => {
-                if (item.id !== action.payload.orderID) return item;
-                return new Order({ ...item, quantity: action.payload.quantity });
+                if (item.id !== action.payload.id) return item;
+                return new Order({ 
+                    ...item, 
+                    quantity: action.payload.quantity, 
+                    updatedAt: action.payload.time
+                 });
             })
 
         default:
