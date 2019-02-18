@@ -29,6 +29,7 @@ export default class Order {
     readonly type: string;
     readonly flag: string;
     readonly quantity: number;
+    // TODO: make readonly 
     price: number;
     trailingPrice: number;
     readonly status: string;

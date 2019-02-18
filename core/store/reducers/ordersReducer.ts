@@ -1,4 +1,3 @@
-
 import Order from '../../models/Order';
 import { ActionTypes as types, orderStatuses } from './../types';
 import { ActionInterface } from '../../interfaces/ActionInterface';
@@ -39,8 +38,13 @@ export function ordersReducer(state: Order[] = [], action?: ActionInterface): Or
             });
         case types.UPDATE_ORDER_PRICE:
             return state.map(item => {
-                if (item.id !== action.payload.orderID) return item;
-                return new Order({ ...item, price: action.payload.price });
+                if (item.id !== action.payload.id) return item;
+
+                return new Order({ 
+                    ...item, 
+                    price: action.payload.price, 
+                    updatedAt: action.payload.time
+                 });
             })
         case types.UPDATE_ORDER_QUANTITY:
             return state.map(item => {

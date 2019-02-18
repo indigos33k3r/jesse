@@ -165,12 +165,13 @@ export function cancelOrder(id: number): ActionInterface {
         }
     };
 }
-export function updateOrderPrice(orderID: number, price: number): ActionInterface {
+export function updateOrderPrice(id: number, price: number): ActionInterface {
     return {
         type: types.UPDATE_ORDER_PRICE,
         payload: {
-            orderID, 
-            price
+            id, 
+            price, 
+            time: ($.isBackTesting() ? (store.getState().mainReducer.currentTime ? store.getState().mainReducer.currentTime : $.now()) : $.now())
         }
     };
 }

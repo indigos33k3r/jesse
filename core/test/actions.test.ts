@@ -190,8 +190,9 @@ it('Should create an action to update order price', () => {
     expect(actions.updateOrderPrice(123, 321)).toEqual({
         type: ActionTypes.UPDATE_ORDER_PRICE,
         payload: {
-            orderID: 123, 
-            price: 321
+            id: 123, 
+            price: 321, 
+            time: $.now()
         }
     });
 });

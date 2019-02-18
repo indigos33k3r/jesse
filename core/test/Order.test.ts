@@ -33,6 +33,32 @@ it('Should cancel order', () => {
     expect(store.getState().orders[0].canceledAt).toBe($.now());
 });
 
+it('Should update order price', () => {
+    const order: Order = new Order({
+        id: $.generateUniqueID(),
+        flag: null,
+        symbol: config.symbolToTrade,
+        type: orderTypes.LIMIT,
+        price: 129.33,
+        quantity: 10.2041,
+        side: Sides.BUY,
+        status: orderStatuses.ACTIVE,
+        createdAt: $.now(),
+        executedAt: null, 
+        canceledAt: null, 
+        updatedAt: null
+    });
+
+    store.dispatch(actions.addOrder(order));
+    
+    order.updatePrice(130); 
+
+    expect(store.getState().orders[0].status).toBe(orderStatuses.ACTIVE);
+    expect(store.getState().orders[0].updatedAt).toBe($.now());
+    expect(store.getState().orders[0].executedAt).toBe(null);
+    expect(store.getState().orders[0].canceledAt).toBe(null);
+});
+
 it('Should execute order', () => {
     const order: Order = new Order({
         id: $.generateUniqueID(),
