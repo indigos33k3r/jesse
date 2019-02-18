@@ -15,11 +15,9 @@ export const initialState: StateInterface = {
     startingBalance: config.startingBalance,
     conflictingOrdersCount: 0,
     startTime: new Date().valueOf(),
-    tradingFee: config.tradingFee, 
     profit: 0,
     entryPrice: null,
     quantity: 0,
-    symbol: config.symbolToTrade,
 };
 
 /**
@@ -47,18 +45,18 @@ export function mainReducer(state: StateInterface = initialState, action?: Actio
         case types.INCREASE_CURRENT_BALANCE:
             return { 
                 ...state, 
-                currentBalance: state.currentBalance + (Math.abs(action.payload) * (1 - state.tradingFee))
+                currentBalance: state.currentBalance + (Math.abs(action.payload.balance) * (1 - action.payload.fee))
             };
         case types.REDUCE_CURRENT_BALANCE:
             return {
                  ...state, 
-                 currentBalance: state.currentBalance - Math.abs(action.payload) * (1 + state.tradingFee)
+                 currentBalance: state.currentBalance - Math.abs(action.payload.balance) * (1 + action.payload.fee)
             };
         case types.ADD_PROFIT:
             return {
                  ...state, 
                 profit: state.profit + 
-                (action.payload > 0 ? (action.payload * (1 - state.tradingFee)) : (action.payload * (1 + state.tradingFee)))
+                (action.payload.profit > 0 ? (action.payload.profit * (1 - action.payload.fee)) : (action.payload.profit * (1 + action.payload.fee)))
             };
         case types.INCREASE_CONFLICTING_ORDERS_COUNT:
             return { ...state, conflictingOrdersCount: action.payload };
@@ -72,12 +70,8 @@ export function mainReducer(state: StateInterface = initialState, action?: Actio
             return { ...state, quantity: action.payload };
         case types.UPDATE_ENTRY_PRICE:
             return { ...state, entryPrice: action.payload };
-        case types.SET_TRADING_SYMBOL:
-            return { ...state, symbol: action.payload };
         case types.SET_SESSION_ID:
             return { ...state, sessionID: action.payload };
-        case types.SET_TRADING_FEE:
-            return { ...state, tradingFee: action.payload };
 
         default:
             return state;

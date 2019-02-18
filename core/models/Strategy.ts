@@ -362,7 +362,7 @@ export default abstract class Strategy {
                 this.trade.quantity = _.sumBy(
                     this.trade.orders.filter(item => item.side === $.typeToSide(this.trade.type)), item => Math.abs(item.quantity)
                 );
-                this.trade.fee = store.getState().mainReducer.tradingFee * this.trade.quantity * (this.trade.entryPrice + this.trade.exitPrice);
+                this.trade.fee = store.getState().config.tradingFee * this.trade.quantity * (this.trade.entryPrice + this.trade.exitPrice);
                 this.trade.takeProfitPrice = this.takeProfitPrice; 
 
                 store.dispatch(actions.addTrade(this.trade));

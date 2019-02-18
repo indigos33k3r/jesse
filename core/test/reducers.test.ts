@@ -23,12 +23,17 @@ it('should handle SET_STARTING_BALANCE', () => {
 });
 
 it('Should handle INCREASE_CURRENT_BALANCE', () => {
+    store.dispatch(actions.setTradingFee(0)); 
+
     const currentBalance: number = initialState.currentBalance;
 
     expect(
         mainReducer(initialState, {
             type: ActionTypes.INCREASE_CURRENT_BALANCE,
-            payload: 10
+            payload: {
+                balance: 10, 
+                fee: 0
+            }
         })
     ).toEqual({
         ...initialState,
@@ -37,12 +42,17 @@ it('Should handle INCREASE_CURRENT_BALANCE', () => {
 });
 
 it('Should handle REDUCE_CURRENT_BALANCE', () => {
+    store.dispatch(actions.setTradingFee(0)); 
+
     const currentBalance: number = initialState.currentBalance;
 
     expect(
         mainReducer(initialState, {
             type: ActionTypes.REDUCE_CURRENT_BALANCE,
-            payload: 10
+            payload: {
+                balance: 10, 
+                fee: 0
+            }
         })
     ).toEqual({
         ...initialState,

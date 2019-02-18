@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 import Order from '../models/Order';
-import { actions } from '../store';
+import store, { actions } from '../store';
 import { ActionTypes } from '../store/types';
 import Candle from '../models/Candle';
 import $ from '../services/Helpers';
@@ -24,15 +24,25 @@ it('Should create an action to set current balance', () => {
     });
 });
 it('Should create an action to increase balance', () => {
+    store.dispatch(actions.setTradingFee(0)); 
+
     expect(actions.increaseCurrentBalance(5)).toEqual({
         type: ActionTypes.INCREASE_CURRENT_BALANCE,
-        payload: 5
+        payload: {
+            balance: 5, 
+            fee: 0
+        }
     });
 });
 it('Should create an action to reduce balance', () => {
+    store.dispatch(actions.setTradingFee(0)); 
+
     expect(actions.reduceCurrentBalance(6)).toEqual({
         type: ActionTypes.REDUCE_CURRENT_BALANCE,
-        payload: 6
+        payload: {
+            balance: 6, 
+            fee: 0
+        }
     });
 });
 it('Should create an action to currentTime', () => {

@@ -20,7 +20,7 @@ const defaultHyperParameters: HyperParametersInterface = {
 export default class ScalpingStrategy extends Strategy {
     hyperParameters: HyperParametersInterface;
     positionSize: number = config.positionSize;
-    pip: number = $.estimatePip(store.getState().mainReducer.symbol);
+    pip: number = $.estimatePip(store.getState().config.tradingSymbol);
     EMA8: number;
     EMA21: number;
 

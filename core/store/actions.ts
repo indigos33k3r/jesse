@@ -29,13 +29,19 @@ export function setCurrentBalance(balance: number): ActionInterface {
 }
 export function increaseCurrentBalance(balance: number): ActionInterface {
     return {
-        payload: balance,
-        type: types.INCREASE_CURRENT_BALANCE
+        type: types.INCREASE_CURRENT_BALANCE, 
+        payload: {
+            balance, 
+            fee: store.getState().config.tradingFee
+        },
     };
 }
 export function reduceCurrentBalance(balance: number): ActionInterface {
     return {
-        payload: balance,
+        payload: {
+            balance, 
+            fee: store.getState().config.tradingFee
+        },
         type: types.REDUCE_CURRENT_BALANCE
     };
 }
@@ -81,9 +87,12 @@ export function setStartTime(time: number): ActionInterface {
         payload: time
     };
 }
-export function addProfit(addedProfit: number): ActionInterface {
+export function addProfit(profit: number): ActionInterface {
     return {
-        payload: addedProfit,
+        payload: {
+            fee: store.getState().config.tradingFee, 
+            profit
+        },
         type: types.ADD_PROFIT
     };
 }

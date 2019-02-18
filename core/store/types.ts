@@ -1,7 +1,6 @@
 
 export interface StateInterface {
     readonly sessionID: number;
-
     readonly startingBalance: number;
     readonly currentBalance: number;
     readonly profit: number;
@@ -9,11 +8,8 @@ export interface StateInterface {
     readonly conflictingOrdersCount: number;
     readonly currentTime: string;
     readonly startTime: number;
-    readonly tradingFee: number;
-
     readonly quantity: number;
     readonly entryPrice: number;
-    readonly symbol: string;
 }
 
 export const enum ActionTypes {
