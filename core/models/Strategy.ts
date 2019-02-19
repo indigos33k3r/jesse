@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Event from '../services/Event';
 import EventDataInterface from '../interfaces/EventDataInterface';
 import Trader from './Trader';
+import Logger from '../services/Logger';
 
 export default abstract class Strategy {
     name: string;
@@ -161,7 +162,7 @@ export default abstract class Strategy {
      */
     async onOpenPosition() {
         if ($.isDebugging()) {
-            store.dispatch(actions.logWarning(`Detected open position. Setting stops now:`));
+            Logger.warning(`Detected open position. Setting stops now:`);
         }
 
         if (currentPosition.type() === TradeTypes.LONG) {
@@ -192,9 +193,7 @@ export default abstract class Strategy {
      */
     async onStopLoss() {
         if ($.isDebugging()) {
-            store.dispatch(
-                actions.logWarning(`StopLoss has been executed. Looking for next trade...`)
-            );
+            Logger.warning(`StopLoss has been executed. Looking for next trade...`);
         }
 
         await this.reset();
@@ -207,7 +206,7 @@ export default abstract class Strategy {
      */
     async onTakeProfit() {
         if ($.isDebugging()) {
-            store.dispatch(actions.logWarning(`Sweet! Take profit order has been executed. Let's look for the next hunt.`));
+            Logger.warning(`Sweet! Take profit order has been executed. Let's look for the next hunt.`);
         }
         
         await this.reset();
@@ -267,7 +266,7 @@ export default abstract class Strategy {
     async execute() {
         // return while there isn't enough candles to execute the strategy
         if (selectors.getTradingCandles().length < this.minimumRequiredCandle) {
-            store.dispatch(actions.logWarning(`${this.constructor.name} requires ${this.minimumRequiredCandle} candles to begin executing, but there's only ${selectors.getTradingCandles().length} candles present.`)); 
+            Logger.warning(`${this.constructor.name} requires ${this.minimumRequiredCandle} candles to begin executing, but there's only ${selectors.getTradingCandles().length} candles present.`);
             return; 
         }
 
@@ -295,15 +294,11 @@ export default abstract class Strategy {
                 currentPosition.close(store.getState().mainReducer.entryPrice);
 
                 if ($.isDebugging()) {
-                    store.dispatch(
-                        actions.logWarning(
-                            `Finished backTest. Closed the last order at opening price to exclude it from the stats (since it's incomplete, hence being inaccurate).`
-                        )
-                    );
+                    Logger.warning(`Finished backTest. Closed the last order at opening price to exclude it from the stats (since it's incomplete, hence being inaccurate).`);
                 }
             }
         } catch (error) {
-            store.dispatch(actions.logError(error));
+            Logger.error(error); 
         }
     }
 

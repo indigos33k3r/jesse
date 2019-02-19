@@ -1,13 +1,14 @@
+import Indicators from 'jesse-indicators';
 import _ from 'lodash';
 import config from '../../config';
-import $ from '../../core/services/Helpers';
-import HyperParametersInterface from './types';
 import Candle from '../../core/models/Candle';
 import Strategy from '../../core/models/Strategy';
+import $ from '../../core/services/Helpers';
+import Logger from '../../core/services/Logger';
 import currentPosition from '../../core/services/Positions';
-import store, { actions, selectors } from '../../core/store';
+import store, { selectors } from '../../core/store';
 import { Sides, TradeTypes } from '../../core/store/types';
-import Indicators from 'jesse-indicators';
+import HyperParametersInterface from './types';
 
 // Initial hyperParameters:
 const defaultHyperParameters: HyperParametersInterface = {
@@ -57,7 +58,7 @@ export default class ScalpingStrategy extends Strategy {
         }
 
         if (this.shouldBuy()) {
-            store.dispatch(actions.logWarning(`Trigger candle was found. Looking for confirmation...`));
+            Logger.warning(`Trigger candle was found. Looking for confirmation...`);
 
             this.triggerCandle = this.currentCandle;
 
@@ -68,7 +69,7 @@ export default class ScalpingStrategy extends Strategy {
 
             // don't open a position if the trigger candle itself is acting crazy
             if (this.triggerCandle.close > highestPrice) {
-                store.dispatch(actions.logWarning(`I think you should include current candle`));
+                Logger.warning(`I think you should include current candle`);
                 return;
             }
 
@@ -84,7 +85,7 @@ export default class ScalpingStrategy extends Strategy {
                 (this.initialTargetedMargin / this.buyPrice) * 100 <
                 this.hyperParameters.minimumPnlPerTradeFilter
             ) {
-                store.dispatch(actions.logWarning(`Sounds like a crappy trade. Pass!`));
+                Logger.warning(`Sounds like a crappy trade. Pass!`);
                 return;
             }
 
@@ -114,7 +115,7 @@ export default class ScalpingStrategy extends Strategy {
 
         if (this.shouldSell()) {
             if ($.isDebugging()) {
-                store.dispatch(actions.logWarning(`Trigger candle was found. Submitting confirmation orders...`));
+                Logger.warning(`Trigger candle was found. Submitting confirmation orders...`);
             }
 
             this.triggerCandle = this.currentCandle;
@@ -136,7 +137,7 @@ export default class ScalpingStrategy extends Strategy {
 
             // filter trades that don't worth it
             if ((this.initialTargetedMargin / this.sellPrice) * 100 < this.hyperParameters.minimumPnlPerTradeFilter) {
-                store.dispatch(actions.logWarning(`Sounds like a crappy trade, Pass!`));
+                Logger.warning(`Sounds like a crappy trade, Pass!`);
                 return;
             }
 
@@ -242,7 +243,7 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async onOpenPosition() {
-        store.dispatch(actions.logWarning(`Detected open position. Setting stops now:`));
+        Logger.warning(`Detected open position. Setting stops now:`);
 
         if (currentPosition.type() === TradeTypes.LONG) {
             this.stopLossOrder = await this.trader.stopLossAt(
@@ -268,16 +269,16 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async onStopLoss() {
-        if ($.isDebugging())
-            store.dispatch(
-                actions.logWarning(`StopLoss has been executed. Cancel orders and keep looking for trigger candle.`)
-            );
+        if ($.isDebugging()) {
+            Logger.warning(`StopLoss has been executed. Cancel orders and keep looking for trigger candle.`);
+        }
+
         await this.reset();
     }
 
     async onReducedPosition() {
         if ($.isDebugging()) {
-            store.dispatch(actions.logWarning(`Half the position has been exited. Now let's go for the second exit.`));
+            Logger.warning(`Half the position has been exited. Now let's go for the second exit.`);
         }
 
         this.stopLossPrice = store.getState().mainReducer.entryPrice;
