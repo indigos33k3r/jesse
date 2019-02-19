@@ -5,9 +5,11 @@ import { candlesReducer } from './candlesReducer';
 import { ordersReducer } from './ordersReducer';
 import { tradesReducer } from './tradesReducer';
 import { logsReducer } from './logsReducer';
+import { configReducer } from './configReducer';
 
 const combinedReducer = combineReducers({
     mainReducer,
+    config: configReducer, 
     lastAction: lastActionReducer,
     candles: candlesReducer, 
     orders: ordersReducer, 

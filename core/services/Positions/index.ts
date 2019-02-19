@@ -8,7 +8,7 @@ import config from '../../../config';
 
 const currentPosition = {
     symbol(): string {
-        return store.getState().mainReducer.symbol;
+        return store.getState().config.tradingSymbol;
     },
 
     /**
@@ -174,7 +174,7 @@ const currentPosition = {
         let text: string =
             _.repeat(`-`, 70) +
             '\n' +
-            `|| ${store.getState().mainReducer.symbol} || ` +
+            `|| ${store.getState().config.tradingSymbol} || ` +
             `Qty:` +
             $.greenOrRed(store.getState().mainReducer.quantity > 0, `${store.getState().mainReducer.quantity}`) +
             ` | EntryPrice:${store.getState().mainReducer.entryPrice}` +

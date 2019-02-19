@@ -18,6 +18,8 @@ import Report from '../services/Report';
 import Table from '../services/Table';
 import { ActionInterface } from '../interfaces/ActionInterface';
 import Notifier from '../services/Notifier';
+import Statistics from '../services/Statistics';
+import Dashboard from '../services/Dashboard';
 
 /**
  * This class does basically everything that Jesse Livermore would have wished he could do.
@@ -43,9 +45,9 @@ export class Jesse {
      * @returns real money ($ $)
      */
     async liveTrade() {
-        Report.liveTradeDashboard();
+        Dashboard.liveTrade();
         // refresh dashboard every 5 seconds
-        setInterval(Report.liveTradeDashboard, 5000);
+        setInterval(Dashboard.liveTrade, 5000);
 
         // watch for new candles, so that execute the strategy whenever
         // there's a new candle added. Also, does the logging:
@@ -106,7 +108,7 @@ export class Jesse {
     async backTest(candleSet: CandleSetInterface) {
         console.clear(); 
 
-        Table.keyValue(Report.backtestInfo(this.strategy), `JESSE (v${require('../../package.json').version})`);
+        Table.keyValue(Report.backTest(this.strategy), `JESSE (v${require('../../package.json').version})`);
 
         await this.strategy.init();
 
@@ -115,7 +117,7 @@ export class Jesse {
             .timeFrames.find(item => item.timeFrame === '1m').candles;
 
         // Initial Report on the candles we're trying to backTest against
-        Table.keyValue(Report.candles(oneMinuteCandles), 'Candles');
+        Table.keyValue(Statistics.candles(oneMinuteCandles), 'Candles');
 
         // time-travels by faking candles
         await this.runBackTest(oneMinuteCandles);
@@ -128,7 +130,7 @@ export class Jesse {
             store.dispatch(actions.logError(`There was ${store.getState().mainReducer.conflictingOrdersCount} conflicting orders.`))
         }
 
-        Table.keyValue(Report.trades(store.getState().trades), 'Trades');
+        Table.keyValue(Statistics.trades(store.getState().trades), 'Trades');
     }
 
     /**

@@ -1,14 +1,14 @@
 // register donenv to load config values
 require('dotenv').config();
 
+import _ from 'lodash';
 import readline from 'readline';
-import candleSet from './core/services/CandleLoader';
 import config from './config';
 import jesse from './core/models/Jesse';
-import store, { actions } from './core/store';
+import candleSet from './core/services/CandleLoader';
 import Notifier from './core/services/Notifier';
-import _ from 'lodash';
-import Report from './core/services/Report';
+import store, { actions } from './core/store';
+import Dashboard from './core/services/Dashboard';
 
 let executeExit = _.once(function() {
     if (config.notifications.events.liveTradeStopped) {
@@ -68,7 +68,7 @@ switch (config.tradingMode.toLowerCase()) {
                 config.dashboardItems.trades = !config.dashboardItems.trades;
             }
 
-            Report.liveTradeDashboard();
+            Dashboard.liveTrade();
         });
 
         jesse.liveTrade();
