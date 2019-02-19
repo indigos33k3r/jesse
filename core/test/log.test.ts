@@ -1,9 +1,8 @@
-import $ from '../services/Helpers';
 import Order from '../models/Order';
 import Trader from '../models/Trader';
+import $ from '../services/Helpers';
 import store, { actions } from '../store';
 import { reduxActionLogs } from '../store/reducers/mainReducer';
-import { WarningInterface, ErrorInterface } from '../interfaces/LogInterfaces';
 const trader: Trader = new Trader();
 
 beforeEach(() => {
@@ -27,28 +26,6 @@ it('Should log trades', async () => {
     // We should end up with $10 profit
     expect(store.getState().mainReducer.profit).toEqual(10);
     expect(store.getState().orders).toEqual([buyOrder, sellOrder]);
-});
-
-it('Should log errors', () => {
-    const error: ErrorInterface = {
-        message: 'some text',
-        time: $.now()
-    };
-
-    store.dispatch(actions.logError(error.message));
-
-    expect(store.getState().logs.errors).toEqual([error]);
-});
-
-it('Should log errors', () => {
-    const warning: WarningInterface = {
-        message: 'some warning text',
-        time: $.now()
-    };
-
-    store.dispatch(actions.logWarning(warning.message));
-
-    expect(store.getState().logs.warnings).toEqual([warning]);
 });
 
 it('Should log redux actions despite the type of the action', () => {
