@@ -14,7 +14,7 @@ const Statistics = {
         return [
             { key: 'total', value: candles.length },
             { key: 'symbol', value: store.getState().config.tradingSymbol },
-            { key: 'timeFrame', value: config.timeFrameToTrade },
+            { key: 'timeFrame', value: config.app.timeFrameToTrade },
             {
                 key: 'time period',
                 value: `${moment

@@ -11,8 +11,8 @@ export const initialState: StateInterface = {
 
     currentPrice: 0,
     currentTime: '',
-    currentBalance: config.startingBalance,
-    startingBalance: config.startingBalance,
+    currentBalance: config.app.startingBalance,
+    startingBalance: config.app.startingBalance,
     conflictingOrdersCount: 0,
     startTime: new Date().valueOf(),
     profit: 0,

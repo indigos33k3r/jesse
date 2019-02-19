@@ -1,5 +1,5 @@
 export default {
-    useSentryForExceptionReporting: !!parseInt(process.env.ENABLE_SENTRY), 
+    enable: !!parseInt(process.env.ENABLE_SENTRY), 
 
-    sentryDSN: process.env.SENTRY_DSN, 
+    DSN: process.env.SENTRY_DSN, 
 }

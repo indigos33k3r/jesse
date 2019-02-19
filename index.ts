@@ -25,13 +25,13 @@ let executeExit = _.once(function() {
 });
 
 // setup Sentry
-if (config.useSentryForExceptionReporting) {
+if (config.sentry.enable) {
     const Sentry = require('@sentry/node');
-    Sentry.init({ dsn: config.sentryDSN });
+    Sentry.init({ dsn: config.sentry.DSN });
 }
 
 // run the main application
-switch (config.tradingMode.toLowerCase()) {
+switch (config.app.tradingMode.toLowerCase()) {
     case 'backtest':
         jesse.backTest(candleSet);
         break;
@@ -51,21 +51,21 @@ switch (config.tradingMode.toLowerCase()) {
             if (key.ctrl && key.name === 'c') {
                 executeExit();
             } else if (key.name === 'h') {
-                config.dashboardItems.guide = !config.dashboardItems.guide;
+                config.dashboard.items.guide = !config.dashboard.items.guide;
             } else if (key.name === 'i') {
-                config.dashboardItems.info = !config.dashboardItems.info;
+                config.dashboard.items.info = !config.dashboard.items.info;
             } else if (key.name === 'p') {
-                config.dashboardItems.positions = !config.dashboardItems.positions;
+                config.dashboard.items.positions = !config.dashboard.items.positions;
             } else if (key.name === 'c') {
-                config.dashboardItems.candles = !config.dashboardItems.candles;
+                config.dashboard.items.candles = !config.dashboard.items.candles;
             } else if (key.name === 'w') {
-                config.dashboardItems.warnings = !config.dashboardItems.warnings;
+                config.dashboard.items.warnings = !config.dashboard.items.warnings;
             } else if (key.name === 'e') {
-                config.dashboardItems.errors = !config.dashboardItems.errors;
+                config.dashboard.items.errors = !config.dashboard.items.errors;
             } else if (key.name === 'o') {
-                config.dashboardItems.orders = !config.dashboardItems.orders;
+                config.dashboard.items.orders = !config.dashboard.items.orders;
             } else if (key.name === 't') {
-                config.dashboardItems.trades = !config.dashboardItems.trades;
+                config.dashboard.items.trades = !config.dashboard.items.trades;
             }
 
             Dashboard.liveTrade();

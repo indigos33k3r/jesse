@@ -51,8 +51,8 @@ class API implements APIInterface {
                         store.dispatch(actions.logWarning(`Authenticated successfully.`));
 
                         // subscribe to fetch candles (all sizes for all symbols. Set from config file)
-                        config.symbolsToConsider.forEach(symbol => {
-                            config.timeFramesToConsider.forEach(timeFrame => {
+                        config.app.symbolsToConsider.forEach(symbol => {
+                            config.app.timeFramesToConsider.forEach(timeFrame => {
                                 this.subscribeToCandles(timeFrame, symbol);
                             });
                         });

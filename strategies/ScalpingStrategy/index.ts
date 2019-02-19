@@ -20,7 +20,7 @@ const defaultHyperParameters: HyperParametersInterface = {
 
 export default class ScalpingStrategy extends Strategy {
     hyperParameters: HyperParametersInterface;
-    positionSize: number = config.positionSize;
+    positionSize: number = config.app.positionSize;
     pip: number = $.estimatePip(store.getState().config.tradingSymbol);
     EMA8: number;
     EMA21: number;
@@ -38,9 +38,9 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async update() {
-        this.positionSize = config.tradeWithWholeBalance
+        this.positionSize = config.app.tradeWithWholeBalance
             ? store.getState().mainReducer.currentBalance
-            : config.positionSize;
+            : config.app.positionSize;
 
         this.EMA8 = Indicators.EMA($.pluckCandles(selectors.getTradingCandles(), 'close'), 8);
         this.EMA21 = Indicators.EMA($.pluckCandles(selectors.getTradingCandles(), 'close'), 21);

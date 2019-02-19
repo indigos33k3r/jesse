@@ -1,5 +1,5 @@
 export default {
-    dashboardItems: {
+    items: {
         info: true,
         candles: true,
         positions: true, 

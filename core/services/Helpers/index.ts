@@ -373,27 +373,27 @@ const $ = {
     },
 
     isLiveTrading(): boolean {
-        return config.tradingMode === 'livetrade';
+        return config.app.tradingMode === 'livetrade';
     },
 
     isBackTesting(): boolean {
-        return config.tradingMode === 'backtest' || config.tradingMode === 'fitness';
+        return config.app.tradingMode === 'backtest' || config.app.tradingMode === 'fitness';
     },
 
     isTesting(): boolean {
-        return config.isTesting; 
+        return config.app.isTesting; 
     }, 
 
     isFitting(): boolean {
-        return config.tradingMode === 'fitness';
+        return config.app.tradingMode === 'fitness';
     },
 
     isDebugging(): boolean {
-        return config.debugMode;
+        return config.app.debugMode;
     },
 
     isDebuggable(debugItem: string): boolean {
-        return this.isDebugging() && config.debugItems[debugItem];
+        return this.isDebugging() && config.logging.items[debugItem];
     },
 
     /**
@@ -405,8 +405,8 @@ const $ = {
     printToConsole(text: string, type: string = `black`) {
         // Do not print if we're in backTest mode.
         if (this.isBackTesting() && !this.isDebugging()) return;
-        if (config.tradingMode === 'fitness') return;
-        if (config.isTesting) return;
+        if (config.app.tradingMode === 'fitness') return;
+        if (config.app.isTesting) return;
 
         switch (type) {
             case `green`:

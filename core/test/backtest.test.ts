@@ -45,7 +45,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
         id: orders[0].id,
         strategy: strategy.name,
         strategyVersion: strategy.version,
-        symbol: config.symbolToTrade,
+        symbol: config.app.symbolToTrade,
         type: TradeTypes.LONG,
         entryPrice: 129.33,
         exitPrice: 128.35,
@@ -58,7 +58,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
             new Order({
                 id: orders[0].id,
                 flag: null, 
-                symbol: config.symbolToTrade,
+                symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 129.33,
                 quantity: 10.2041,
@@ -71,7 +71,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
             new Order({
                 id: orders[1].id,
                 flag: null, 
-                symbol: config.symbolToTrade,
+                symbol: config.app.symbolToTrade,
                 type: orderTypes.STOP,
                 price: 128.35,
                 quantity: -10.2041,
@@ -89,7 +89,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
         id: orders[3].id,
         strategy: strategy.name,
         strategyVersion: strategy.version,
-        symbol: config.symbolToTrade,
+        symbol: config.app.symbolToTrade,
         type: TradeTypes.SHORT,
         entryPrice: 128.05,
         exitPrice: 126.58,
@@ -102,7 +102,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
             new Order({
                 id: orders[3].id,
                 flag: null, 
-                symbol: config.symbolToTrade,
+                symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 128.05,
                 quantity: -10,
@@ -115,7 +115,7 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
             new Order({
                 id: orders[5].id,
                 flag: null, 
-                symbol: config.symbolToTrade,
+                symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 126.58,
                 quantity: 10,

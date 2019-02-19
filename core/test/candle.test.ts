@@ -173,8 +173,8 @@ it('should add candle. Should add if new, update if already exists', () => {
 });
 
 it('should batch add candles. Should add if new, update if already exists', () => {
-    config.symbolToTrade = supportedSymbols.BTCUSD;
-    config.timeFrameToTrade = supportedTimeFrames.oneMinute;
+    config.app.symbolToTrade = supportedSymbols.BTCUSD;
+    config.app.timeFrameToTrade = supportedTimeFrames.oneMinute;
 
     const candle1: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,

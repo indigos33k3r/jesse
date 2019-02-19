@@ -14,7 +14,7 @@ it('Should cancel order', () => {
     const order: Order = new Order({
         id: $.generateUniqueID(),
         flag: null,
-        symbol: config.symbolToTrade,
+        symbol: config.app.symbolToTrade,
         type: orderTypes.LIMIT,
         price: 129.33,
         quantity: 10.2041,
@@ -37,7 +37,7 @@ it('Should update order price', () => {
     const order: Order = new Order({
         id: $.generateUniqueID(),
         flag: null,
-        symbol: config.symbolToTrade,
+        symbol: config.app.symbolToTrade,
         type: orderTypes.LIMIT,
         price: 129.33,
         quantity: 10.2041,
@@ -63,7 +63,7 @@ it('Should execute order', () => {
     const order: Order = new Order({
         id: $.generateUniqueID(),
         flag: null,
-        symbol: config.symbolToTrade,
+        symbol: config.app.symbolToTrade,
         type: orderTypes.LIMIT,
         price: 129.33,
         quantity: 10.2041,

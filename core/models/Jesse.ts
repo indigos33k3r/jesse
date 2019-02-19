@@ -89,8 +89,8 @@ export class Jesse {
      */
     async executeStrategy(mostRecentCandle: Candle) {
         if (
-            mostRecentCandle.symbol !== config.symbolToTrade ||
-            mostRecentCandle.timeFrame !== config.timeFrameToTrade
+            mostRecentCandle.symbol !== config.app.symbolToTrade ||
+            mostRecentCandle.timeFrame !== config.app.timeFrameToTrade
         ) return;
 
         // update store for global access
@@ -113,7 +113,7 @@ export class Jesse {
         await this.strategy.init();
 
         let oneMinuteCandles: Candle[] = candleSet.symbols
-            .find(item => item.symbol === config.symbolToTrade)
+            .find(item => item.symbol === config.app.symbolToTrade)
             .timeFrames.find(item => item.timeFrame === '1m').candles;
 
         // Initial Report on the candles we're trying to backTest against
@@ -144,7 +144,7 @@ export class Jesse {
         await this.strategy.init();
 
         let oneMinuteCandles: Candle[] = candleSet.symbols
-            .find(item => item.symbol === config.symbolToTrade)
+            .find(item => item.symbol === config.app.symbolToTrade)
             .timeFrames.find(item => item.timeFrame === '1m').candles;
 
         await this.runBackTest(oneMinuteCandles);
@@ -195,7 +195,7 @@ export class Jesse {
      */
     async runBackTest(candles: Candle[]) {
         // progress-bar begins
-        if ($.isBackTesting() && !$.isFitting() && !$.isTesting() && !$.isDebugging() && config.debugItems.progressBar) {
+        if ($.isBackTesting() && !$.isFitting() && !$.isTesting() && !$.isDebugging() && config.logging.items.progressBar) {
             progressBar.start(candles.length);
         }
 
@@ -235,7 +235,7 @@ export class Jesse {
             // ));
 
             // progress-bar updates
-            if ($.isBackTesting() && config.debugItems.progressBar) progressBar.update(index);
+            if ($.isBackTesting() && config.logging.items.progressBar) progressBar.update(index);
 
             // print the 1m candle
             if ($.isDebuggable('shorterPeriodCandles')) $.printCandle(candles[index], true);
@@ -305,19 +305,19 @@ export class Jesse {
             }
 
             // TODO: don't really do "if", create forming candles instead. Or ask for it? Or test it?
-            for (let k = 0; k < config.timeFramesToConsider.length; k++) {
-                if (config.timeFramesToConsider[k] === '1m') {
+            for (let k = 0; k < config.app.timeFramesToConsider.length; k++) {
+                if (config.app.timeFramesToConsider[k] === '1m') {
                     continue;
                 }
 
                 if (
                     index !== 0 &&
-                    (index + 1) % requiredOneMinuteCandlePerTimeFrame(config.timeFramesToConsider[k]) === 0
+                    (index + 1) % requiredOneMinuteCandlePerTimeFrame(config.app.timeFramesToConsider[k]) === 0
                 ) {
                     const generatedCandle: Candle = $.generateCandleFromOneMinutes(
-                        config.timeFramesToConsider[k],
+                        config.app.timeFramesToConsider[k],
                         candles.slice(
-                            index - (requiredOneMinuteCandlePerTimeFrame(config.timeFramesToConsider[k]) - 1),
+                            index - (requiredOneMinuteCandlePerTimeFrame(config.app.timeFramesToConsider[k]) - 1),
                             index
                         )
                     );
@@ -330,7 +330,7 @@ export class Jesse {
         }
 
         // end progress-bar
-        if ($.isBackTesting() && config.debugItems.progressBar) {
+        if ($.isBackTesting() && config.logging.items.progressBar) {
             progressBar.update(candles.length);
             progressBar.stop();
             if (! $.isTesting()) {
@@ -376,9 +376,9 @@ export class Jesse {
         return new Promise((resolve, reject) => {
             if ($.isFitting()) return;
             if ($.isTesting()) return;
-            if (config.logDriver === null) return;
+            if (config.logging.logDriver === null) return;
 
-            if (config.logDriver === 'file') {
+            if (config.logging.logDriver === 'file') {
                 let fileName = Date.now();
 
                 // store orders:

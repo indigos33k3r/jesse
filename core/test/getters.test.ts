@@ -35,8 +35,8 @@ it('Should return the count of active orders', async () => {
 }); 
 
 it('Should return latest trading candle', () => {
-    config.symbolToTrade = 'BTCUSD';
-    config.timeFrameToTrade = '5m';
+    config.app.symbolToTrade = 'BTCUSD';
+    config.app.timeFrameToTrade = '5m';
 
     const candle1: Candle = new Candle(
         {
@@ -150,8 +150,8 @@ it('Should return latest trading candle', () => {
 });
 
 it('Should return latest candle for a specific symbol or a specific timeFrame', () => {
-    config.symbolToTrade = 'BTCUSD';
-    config.timeFrameToTrade = '5m';
+    config.app.symbolToTrade = 'BTCUSD';
+    config.app.timeFrameToTrade = '5m';
 
     const candle1: Candle = new Candle(
         {
@@ -266,8 +266,8 @@ it('Should return latest candle for a specific symbol or a specific timeFrame', 
 });
 
 it('Should return all the trading candles', () => {
-    config.symbolToTrade = 'BTCUSD';
-    config.timeFrameToTrade = '5m';
+    config.app.symbolToTrade = 'BTCUSD';
+    config.app.timeFrameToTrade = '5m';
 
     const candle1: Candle = new Candle(
         {
@@ -381,8 +381,8 @@ it('Should return all the trading candles', () => {
 });
 
 it('Should return all candles for a specific symbol and/or a specific timeFrame', () => {
-    config.symbolToTrade = 'BTCUSD';
-    config.timeFrameToTrade = '5m';
+    config.app.symbolToTrade = 'BTCUSD';
+    config.app.timeFrameToTrade = '5m';
 
     const candle1: Candle = new Candle(
         {
@@ -498,8 +498,8 @@ it('Should return all candles for a specific symbol and/or a specific timeFrame'
 });
 
 it('Should return past candle', () => {
-    config.symbolToTrade = 'ETHUSD';
-    config.timeFrameToTrade = '5m';
+    config.app.symbolToTrade = 'ETHUSD';
+    config.app.timeFrameToTrade = '5m';
 
     const candle1: Candle = new Candle(
         {
@@ -563,8 +563,8 @@ it('Should return past candle', () => {
 });
 
 it('Should return past candle', () => {
-    config.symbolToTrade = 'BTCUSD';
-    config.timeFrameToTrade = '15m';
+    config.app.symbolToTrade = 'BTCUSD';
+    config.app.timeFrameToTrade = '15m';
 
     const candle1: Candle = new Candle(
         {

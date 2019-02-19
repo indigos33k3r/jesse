@@ -9,7 +9,7 @@ interface StateInterface {
 
 const initialState: StateInterface = {
     tradingFee: config.tradingFee,
-    tradingSymbol: config.symbolToTrade
+    tradingSymbol: config.app.symbolToTrade
 };
 
 export function configReducer(state: StateInterface = initialState, action?: ActionInterface): StateInterface {

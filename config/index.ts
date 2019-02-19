@@ -6,10 +6,10 @@ import dashboard from './dashboard';
 import notifications from './notifications';
 
 export default {
-    ...app,
-    ...logging,
+    app: { ...app },
+    logging: { ...logging },
     ...exchanges,
-    ...sentry,
-    ...dashboard,
+    sentry: { ...sentry },
+    dashboard: { ...dashboard },
     notifications: { ...notifications }
 };

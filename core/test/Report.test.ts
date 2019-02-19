@@ -20,7 +20,7 @@ beforeEach(() => {
 it('Should return proper Report for Jesse', () => {
     expect(Report.backTest(new TestStrategy())).toEqual([
         { key: 'strategy', value: `A strategy used for testing (v0.0.1)` },
-        { key: 'debug mode', value: config.debugMode ? 'enabled' : 'disabled' }
+        { key: 'debug mode', value: config.app.debugMode ? 'enabled' : 'disabled' }
     ]);
 });
 
@@ -87,7 +87,7 @@ it('Should return proper Report for given candles[]', () => {
         {
             item: [
                 { key: 'symbol', value: candle1.symbol === store.getState().config.tradingSymbol ? '*' + candle1.symbol : candle1.symbol, color: candle1.symbol === store.getState().config.tradingSymbol ? '' : 'grey' },
-                { key: 'timeFrame', value: candle1.timeFrame, color: candle1.timeFrame === config.timeFrameToTrade ? '' : 'grey' },
+                { key: 'timeFrame', value: candle1.timeFrame, color: candle1.timeFrame === config.app.timeFrameToTrade ? '' : 'grey' },
                 { key: 'open', value: _.round(candle1.open, 3).toString(), color: candle1.isBullish() ? 'green' : 'red' },
                 { key: 'close', value: _.round(candle1.close, 3), color: candle1.isBullish() ? 'green' : 'red' },
                 { key: 'high', value: _.round(candle1.high, 3), color: candle1.isBullish() ? 'green' : 'red' },
@@ -98,7 +98,7 @@ it('Should return proper Report for given candles[]', () => {
         {
             item: [
                 { key: 'symbol', value: candle2.symbol === store.getState().config.tradingSymbol ? '*' + candle2.symbol : candle2.symbol, color: candle2.symbol === store.getState().config.tradingSymbol ? '' : 'grey' },
-                { key: 'timeFrame', value: candle2.timeFrame, color: candle2.timeFrame === config.timeFrameToTrade ? '' : 'grey' },
+                { key: 'timeFrame', value: candle2.timeFrame, color: candle2.timeFrame === config.app.timeFrameToTrade ? '' : 'grey' },
                 { key: 'open', value: _.round(candle2.open, 3).toString(), color: candle2.isBullish() ? 'green' : 'red' },
                 { key: 'close', value: _.round(candle2.close, 3), color: candle2.isBullish() ? 'green' : 'red' },
                 { key: 'high', value: _.round(candle2.high, 3), color: candle2.isBullish() ? 'green' : 'red' },

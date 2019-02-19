@@ -15,11 +15,11 @@ const Dashboard = {
     liveTrade(): void {
         console.clear();
 
-        if (config.dashboardItems.info) {
+        if (config.dashboard.items.info) {
             Table.keyValue(Report.liveTrade(jesse.strategy), `JESSE (v${require('../../../package.json').version})`);
         }
 
-        if (config.dashboardItems.errors && store.getState().logs.errors.length) {
+        if (config.dashboard.items.errors && store.getState().logs.errors.length) {
             console.log('Latest Errors:');
             let errors: ErrorInterface[] = [];
             if (store.getState().logs.errors.length < 6) {
@@ -37,7 +37,7 @@ const Dashboard = {
             console.log(`\n`);
         }
 
-        if (config.dashboardItems.warnings && store.getState().logs.warnings.length) {
+        if (config.dashboard.items.warnings && store.getState().logs.warnings.length) {
             console.log('Latest Warnings:');
             let warnings: WarningInterface[] = [];
             if (store.getState().logs.warnings.length < 6) {
@@ -55,11 +55,11 @@ const Dashboard = {
             console.log(`\n`);
         }
 
-        if (config.dashboardItems.candles) {
+        if (config.dashboard.items.candles) {
             const candles: Candle[] = [];
-            if (store.getState().candles.symbols.length === config.symbolsToConsider.length) {
-                config.symbolsToConsider.forEach(symbol => {
-                    config.timeFramesToConsider.forEach(timeFrame => {
+            if (store.getState().candles.symbols.length === config.app.symbolsToConsider.length) {
+                config.app.symbolsToConsider.forEach(symbol => {
+                    config.app.timeFramesToConsider.forEach(timeFrame => {
                         candles.push(selectors.getCurrentCandleFor(symbol, timeFrame));
                     });
                 });
@@ -68,7 +68,7 @@ const Dashboard = {
             Table.multiValue(Report.candles(candles), 'Candles');
         };
 
-        if (config.dashboardItems.positions && currentPosition.isOpen()) {
+        if (config.dashboard.items.positions && currentPosition.isOpen()) {
             Table.multiValue(Report.positions([
                 {
                     type: currentPosition.type(),
@@ -80,7 +80,7 @@ const Dashboard = {
             ]), 'Positions');
         };
 
-        if (config.dashboardItems.orders && store.getState().orders.length) {
+        if (config.dashboard.items.orders && store.getState().orders.length) {
             Table.multiValue(Report.orders(store.getState().orders), 'Orders'); 
         };
 
@@ -89,44 +89,44 @@ const Dashboard = {
             chalk.bold(`Usage:`),
             chalk.grey(`Press`),
             `h`,
-            chalk.grey(`to ${config.dashboardItems.guide ? 'hide' : 'show'} help`)
+            chalk.grey(`to ${config.dashboard.items.guide ? 'hide' : 'show'} help`)
         );
-        if (config.dashboardItems.guide) {
+        if (config.dashboard.items.guide) {
             console.log(chalk.grey(`  > press`), `ctrl + c`, chalk.grey(`to terminate`));
             console.log(
                 chalk.grey(`  > press`),
                 `i`,
-                chalk.grey(`to ${config.dashboardItems.info ? 'hide' : 'show'} info table`)
+                chalk.grey(`to ${config.dashboard.items.info ? 'hide' : 'show'} info table`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `p`,
-                chalk.grey(`to ${config.dashboardItems.positions ? 'hide' : 'show'} open positions table`)
+                chalk.grey(`to ${config.dashboard.items.positions ? 'hide' : 'show'} open positions table`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `c`,
-                chalk.grey(`to ${config.dashboardItems.candles ? 'hide' : 'show'} candles table`)
+                chalk.grey(`to ${config.dashboard.items.candles ? 'hide' : 'show'} candles table`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `o`,
-                chalk.grey(`to ${config.dashboardItems.orders ? 'hide' : 'show'} orders`)
+                chalk.grey(`to ${config.dashboard.items.orders ? 'hide' : 'show'} orders`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `t`,
-                chalk.grey(`to ${config.dashboardItems.trades ? 'hide' : 'show'} trades`)
+                chalk.grey(`to ${config.dashboard.items.trades ? 'hide' : 'show'} trades`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `e`,
-                chalk.grey(`to ${config.dashboardItems.errors ? 'hide' : 'show'} errors`)
+                chalk.grey(`to ${config.dashboard.items.errors ? 'hide' : 'show'} errors`)
             );
             console.log(
                 chalk.grey(`  > press`),
                 `w`,
-                chalk.grey(`to ${config.dashboardItems.warnings ? 'hide' : 'show'} warnings`)
+                chalk.grey(`to ${config.dashboard.items.warnings ? 'hide' : 'show'} warnings`)
             );
         }
     }

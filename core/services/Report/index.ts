@@ -22,14 +22,14 @@ const Report = {
     backTest(strategy: Strategy): TableDataInterface[] {
         return [
             { key: 'strategy', value: `${strategy.name} (v${strategy.version})` },
-            { key: 'debug mode', value: config.debugMode ? 'enabled' : 'disabled' }
+            { key: 'debug mode', value: config.app.debugMode ? 'enabled' : 'disabled' }
         ];
     },
 
     liveTrade(strategy: Strategy): TableDataInterface[] {
         return [
             { key: 'strategy', value: `${strategy.name} - v${strategy.version}` },
-            { key: 'debug mode', value: config.debugMode ? 'enabled' : 'disabled' },
+            { key: 'debug mode', value: config.app.debugMode ? 'enabled' : 'disabled' },
             { key: 'profit', value: `$${store.getState().mainReducer.profit}` },
             {
                 key: 'current time',
@@ -69,7 +69,7 @@ const Report = {
         const list: MultiValueTableDataInterface[] = [];
 
         candles.forEach(c => {
-            const isTradingCandle: boolean = c.symbol === store.getState().config.tradingSymbol && c.timeFrame === config.timeFrameToTrade;
+            const isTradingCandle: boolean = c.symbol === store.getState().config.tradingSymbol && c.timeFrame === config.app.timeFrameToTrade;
             const isBullish: boolean = c.isBullish();
 
             list.push({

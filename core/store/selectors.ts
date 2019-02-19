@@ -34,8 +34,8 @@ export function countOfActiveOrders(): number {
 export function getCurrentTradingCandle(): Candle {
     const candles: Candle[] = store
         .getState()
-        .candles.symbols.find(item => item.symbol === config.symbolToTrade)
-        .timeFrames.find(item => item.timeFrame === config.timeFrameToTrade).candles;
+        .candles.symbols.find(item => item.symbol === config.app.symbolToTrade)
+        .timeFrames.find(item => item.timeFrame === config.app.timeFrameToTrade).candles;
 
     return candles[candles.length - 1];
 }
@@ -49,21 +49,21 @@ export function getCurrentTradingCandle(): Candle {
 export function getTradingCandles(): Candle[] {
     return store
         .getState()
-        .candles.symbols.find(item => item.symbol === config.symbolToTrade)
-        .timeFrames.find(item => item.timeFrame === config.timeFrameToTrade).candles;
+        .candles.symbols.find(item => item.symbol === config.app.symbolToTrade)
+        .timeFrames.find(item => item.timeFrame === config.app.timeFrameToTrade).candles;
 }
 
 /**
  * The current(last added) candle for a specific symbol or a specific timeFrame.
  *
  * @export
- * @param {string} [symbol=config.symbolToTrade]
- * @param {string} [timeFrame=config.timeFrameToTrade]
+ * @param {string} [symbol=config.app.symbolToTrade]
+ * @param {string} [timeFrame=config.app.timeFrameToTrade]
  * @returns {Candle}
  */
 export function getCurrentCandleFor(
-    symbol: string = config.symbolToTrade,
-    timeFrame: string = config.timeFrameToTrade
+    symbol: string = config.app.symbolToTrade,
+    timeFrame: string = config.app.timeFrameToTrade
 ): Candle {
     $.validateSymbol(symbol);
     $.validateTimeFrame(timeFrame);
@@ -77,8 +77,8 @@ export function getCurrentCandleFor(
 }
 
 export function getCandlesFor(
-    symbol: string = config.symbolToTrade,
-    timeFrame: string = config.timeFrameToTrade
+    symbol: string = config.app.symbolToTrade,
+    timeFrame: string = config.app.timeFrameToTrade
 ): Candle[] {
     $.validateSymbol(symbol);
     $.validateTimeFrame(timeFrame);
@@ -92,13 +92,13 @@ export function getCandlesFor(
 export function getPastTradingCandle(numberOfCandlesAgo: number): Candle {
     const candles: Candle[] = store
         .getState()
-        .candles.symbols.find(item => item.symbol === config.symbolToTrade)
-        .timeFrames.find(item => item.timeFrame === config.timeFrameToTrade).candles;
+        .candles.symbols.find(item => item.symbol === config.app.symbolToTrade)
+        .timeFrames.find(item => item.timeFrame === config.app.timeFrameToTrade).candles;
 
     return candles[candles.length - (numberOfCandlesAgo + 1)];
 }
 
-export function getPastCandleFor(numberOfCandlesAgo: number, symbol: string = config.symbolToTrade, timeFrame: string = config.timeFrameToTrade): Candle {
+export function getPastCandleFor(numberOfCandlesAgo: number, symbol: string = config.app.symbolToTrade, timeFrame: string = config.app.timeFrameToTrade): Candle {
     const candles: Candle[] = store
         .getState()
         .candles.symbols.find(item => item.symbol === symbol)

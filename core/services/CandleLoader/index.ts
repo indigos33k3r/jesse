@@ -5,7 +5,7 @@ import { CandleSetInterface, CandleSetSymbol, CandleSetTimeFrame } from '../../i
 import $ from '../Helpers';
 
 function getCandlesFilesPath(symbol: string, candleSize: string): string {
-    return `./storage/history/${config.candleFiles.folder}/${symbol}/${config.candleFiles.date}/${candleSize}.json`;
+    return `./storage/history/${config.app.candleFiles.folder}/${symbol}/${config.app.candleFiles.date}/${candleSize}.json`;
 }
 
 const candleSet: CandleSetInterface = {
@@ -13,13 +13,13 @@ const candleSet: CandleSetInterface = {
 };
 
 if (! $.isLiveTrading()) {
-    config.symbolsToConsider.forEach(symbol => {
+    config.app.symbolsToConsider.forEach(symbol => {
         let candleSetItem: CandleSetSymbol = {
             symbol,
             timeFrames: []
         };
     
-        config.timeFramesToConsider.forEach(timeFrame => {
+        config.app.timeFramesToConsider.forEach(timeFrame => {
             // just get 1m candles for now. 
             if (timeFrame !== '1m') return;
 
