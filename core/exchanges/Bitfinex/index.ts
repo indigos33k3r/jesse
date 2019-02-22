@@ -11,6 +11,7 @@ import currentPosition from '../../services/Positions';
 import Candle from '../../models/Candle';
 import Exchange from '../Exchange';
 import { getOrderFlags, getError, transformPositionData } from './utilities';
+
 /**
  * To connect to Bitfinex's market via WS connection. Currently supports margin trading only.
  *
@@ -156,6 +157,14 @@ export default class Bitfinex extends Exchange {
         });
     }
 
+    /**
+     * Handles updated order. 
+     * TODO: add method to update order 
+     *
+     * @private
+     * @param {any[]} data
+     * @memberof Bitfinex
+     */
     private handleUpdatedOrder(data: any[]) {
         const cid: number = data[2];
         const price: number = data[16];
@@ -165,13 +174,13 @@ export default class Bitfinex extends Exchange {
         updatedOrder.updatePrice(price);
         updatedOrder.updateQuantity(amount);
     }
-
+    
     /**
      * Handles the "oc" message from Bitfinex. Could mean both order cancellation and execution.
      *
      * @private
      * @param {any[]} data
-     * @memberof API
+     * @memberof Bitfinex
      */
     private handleOC(data: any[]): void {
         const cid: number = data[2];
@@ -183,12 +192,14 @@ export default class Bitfinex extends Exchange {
             order.execute();
         }
     }
-
+    
     /**
      * Close position.
      * TODO: support more than one position.
      *
-     * @param data any[]
+     * @private
+     * @param {any[]} data
+     * @memberof Bitfinex
      */
     private closePosition(data: any[]) {
         const pos: BitfinexPosition = transformPositionData(data);
@@ -199,12 +210,14 @@ export default class Bitfinex extends Exchange {
             store.dispatch(actions.updateQuantity(0));
         }
     }
-
+    
     /**
      * keeps the open positions synced.
      * TODO: support more than one position.
      *
-     * @param data any[]
+     * @private
+     * @param {any[]} data
+     * @memberof Bitfinex
      */
     private syncPositions(data: any[]) {
         const positions: BitfinexPosition[] = [];
@@ -218,12 +231,14 @@ export default class Bitfinex extends Exchange {
             }
         });
     }
-
+    
     /**
      * Opens a new position.
      * TODO: handle multiple positions.
      *
-     * @param data any[]
+     * @private
+     * @param {any[]} data
+     * @memberof Bitfinex
      */
     private openPosition(data: any[]) {
         const pos: BitfinexPosition = transformPositionData(data);
@@ -231,11 +246,13 @@ export default class Bitfinex extends Exchange {
         store.dispatch(actions.updateQuantity(pos.amount));
         store.dispatch(actions.updateEntryPrice(pos.basePrice));
     }
-
+    
     /**
      * handles new candle(s) received over the WS connection.
      *
-     * @param data any[]
+     * @private
+     * @param {any[]} data
+     * @memberof Bitfinex
      */
     private handleNewCandles(data: any[]) {
         const channel: CandlesChannel = this.subscribedCandleChannels.find(item => item.id === data[0]);
@@ -289,6 +306,13 @@ export default class Bitfinex extends Exchange {
         }
     }
 
+    /**
+     * Subscribes to candle channels. 
+     *
+     * @param {string} timeFrame
+     * @param {string} symbol
+     * @memberof Bitfinex
+     */
     subscribeToCandles(timeFrame: string, symbol: string) {
         $.validateSymbol(symbol);
         $.validateTimeFrame(timeFrame);
@@ -320,6 +344,12 @@ export default class Bitfinex extends Exchange {
         }
     }
 
+    /**
+     * Authenticates into the market. 
+     *
+     * @returns
+     * @memberof Bitfinex
+     */
     authenticate() {
         const apiKey = config.exchanges.exchanges.Bitfinex.apiKey;
         const apiSecret = config.exchanges.exchanges.Bitfinex.apiSecret;
@@ -353,11 +383,14 @@ export default class Bitfinex extends Exchange {
             );
         });
     }
-
+    
     /**
-     * (liveTrade only) Submits the order to the Bitfinex.
+     * Submits the order to the Bitfinex.
      *
-     * @param order Order
+     * @private
+     * @param {BitfinexOrder} order
+     * @returns
+     * @memberof Bitfinex
      */
     private async submitOrder(order: BitfinexOrder) {
         // validations
@@ -418,14 +451,16 @@ export default class Bitfinex extends Exchange {
             );
         });
     }
-
+    
     /**
      * Submits a EXCHANGE order to the market.
      *
-     * @param symbol string
-     * @param quantity number
-     * @param side string
-     * @param flags string[]
+     * @param {string} symbol
+     * @param {number} quantity
+     * @param {string} side
+     * @param {string[]} [flags=[]]
+     * @returns {Promise<Order>}
+     * @memberof Bitfinex
      */
     async marketOrder(symbol: string, quantity: number, side: string, flags: string[] = []): Promise<Order> {
         let amount = $.prepareQuantity(quantity, side);
@@ -454,15 +489,17 @@ export default class Bitfinex extends Exchange {
         store.dispatch(actions.addOrder(order));
         return order;
     }
-
+    
     /**
      * Submits a LIMIT order to the market.
      *
-     * @param symbol string
-     * @param quantity number
-     * @param price number
-     * @param side string
-     * @param flags string[]
+     * @param {string} symbol
+     * @param {number} quantity
+     * @param {number} price
+     * @param {string} side
+     * @param {string[]} [flags=[]]
+     * @returns {Promise<Order>}
+     * @memberof Bitfinex
      */
     async limitOrder(
         symbol: string,
@@ -498,16 +535,17 @@ export default class Bitfinex extends Exchange {
         store.dispatch(actions.addOrder(order));
         return order;
     }
-
+    
     /**
      * Submits a TRAILING STOP order to the market.
      *
-     * @param symbol string
-     * @param quantity number
-     * @param price number
-     * @param trailingPrice number
-     * @param side string
-     * @param flags string[]
+     * @param {string} symbol
+     * @param {number} quantity
+     * @param {number} trailingPrice
+     * @param {string} side
+     * @param {string[]} [flags=[]]
+     * @returns {Promise<Order>}
+     * @memberof Bitfinex
      */
     async trailingStopOrder(
         symbol: string,
@@ -547,15 +585,17 @@ export default class Bitfinex extends Exchange {
         store.dispatch(actions.addOrder(order));
         return order;
     }
-
+    
     /**
      * Submits a STOP order to the market.
      *
-     * @param symbol string
-     * @param quantity number
-     * @param price number
-     * @param side string
-     * @param flags string[]
+     * @param {string} symbol
+     * @param {number} quantity
+     * @param {number} price
+     * @param {string} side
+     * @param {string[]} [flags=[]]
+     * @returns {Promise<Order>}
+     * @memberof Bitfinex
      */
     async stopOrder(
         symbol: string,
