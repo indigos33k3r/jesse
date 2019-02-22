@@ -8,7 +8,7 @@ interface StateInterface {
 }
 
 const initialState: StateInterface = {
-    tradingFee: config.tradingFee,
+    tradingFee: config.exchanges.tradingFee,
     tradingSymbol: config.app.symbolToTrade
 };
 

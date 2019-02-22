@@ -1,12 +1,11 @@
-import _ from 'lodash';
-import Candle from '../../models/Candle';
 import chalk from 'chalk';
-import config from '../../../config';
-import Order from '../../models/Order';
 import fs from 'fs';
 import jsonfile from 'jsonfile';
+import _ from 'lodash';
 import mkdirp from 'mkdirp';
 import moment, { Moment } from 'moment-timezone';
+import config from '../../../config';
+import Candle from '../../models/Candle';
 import { Sides, TradeTypes } from '../../store/types';
 moment.tz.setDefault('UTC');
 
@@ -88,16 +87,6 @@ const $ = {
                 if (err) console.error(err);
             });
         }
-    },
-
-    /**
-     * Checks to see if the current candle's price range includes the price of order.
-     *
-     * @param candle Candle
-     * @param order Order
-     */
-    doesCandleIncludeOrderPrice(candle: Candle, order: Order): boolean {
-        return order.price >= candle.low && order.price <= candle.high;
     },
 
     /**
@@ -212,10 +201,6 @@ const $ = {
         }
 
         throw new Error(`side is not supported.`);
-    },
-
-    targetedMarket(): string {
-        return config.exchanges.Bitfinex.baseURL;
     },
 
     /**

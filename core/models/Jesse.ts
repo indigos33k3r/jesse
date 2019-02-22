@@ -20,6 +20,7 @@ import { ActionInterface } from '../interfaces/ActionInterface';
 import Notifier from '../services/Notifier';
 import Statistics from '../services/Statistics';
 import Dashboard from '../services/Dashboard';
+import Order from './Order';
 
 /**
  * This class does basically everything that Jesse Livermore would have wished he could do.
@@ -256,7 +257,7 @@ export class Jesse {
             for (let k = 0; k < store.getState().orders.length; k++) {
                 if (
                     store.getState().orders[k].isNew() &&
-                    $.doesCandleIncludeOrderPrice(candles[index], store.getState().orders[k])
+                    this.doesCandleIncludeOrderPrice(candles[index], store.getState().orders[k])
                 ) {
                     // update store's orders
                     store.getState().orders[k].execute();
@@ -351,11 +352,11 @@ export class Jesse {
             !_.isUndefined(store.getState().orders[store.getState().orders.length - 2]) &&
             store.getState().orders[store.getState().orders.length - 1].isNew() &&
             store.getState().orders[store.getState().orders.length - 2].isNew() &&
-            $.doesCandleIncludeOrderPrice(
+            this.doesCandleIncludeOrderPrice(
                 candle,
                 store.getState().orders[store.getState().orders.length - 2]
             ) &&
-            $.doesCandleIncludeOrderPrice(
+            this.doesCandleIncludeOrderPrice(
                 candle,
                 store.getState().orders[store.getState().orders.length - 1]
             )
@@ -423,6 +424,18 @@ export class Jesse {
             
             setTimeout(() => resolve(), 2000);
         });
+    }
+    
+    /**
+     * Checks to see if the current candle's price range includes the price of order.
+     *
+     * @param {Candle} candle
+     * @param {Order} order
+     * @returns {boolean}
+     * @memberof Jesse
+     */
+    doesCandleIncludeOrderPrice(candle: Candle, order: Order): boolean {
+        return order.price >= candle.low && order.price <= candle.high;
     }
 }
 

@@ -8,7 +8,7 @@ import notifications from './notifications';
 export default {
     app: { ...app },
     logging: { ...logging },
-    ...exchanges,
+    exchanges: { ...exchanges },
     sentry: { ...sentry },
     dashboard: { ...dashboard },
     notifications: { ...notifications }

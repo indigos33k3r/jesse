@@ -1,13 +1,13 @@
 import store from '../store';
 import $ from '../services/Helpers';
-import api from '../exchanges/Bitfinex/API';
 import Order from '../models/Order';
 import currentPosition from '../services/Positions';
 import { Sides, orderFlags } from '../store/types';
+import api from '../services/API';
 
 export default class Trader {
     /**
-     * Creates a sell EXCHANGE order. 
+     * Creates a sell MARKET order. 
      *
      * @param {number} quantity
      * @returns {Promise<Order>}
@@ -16,7 +16,7 @@ export default class Trader {
     async sellAtMarket(quantity: number): Promise<Order> {
         quantity = -Math.abs(quantity);
 
-        let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.SELL);
+        let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.SELL, []);
 
         if (! $.isLiveTrading()) {
             currentPosition.update(quantity);
@@ -34,18 +34,18 @@ export default class Trader {
      * @memberof Trader
      */
     async sellAt(quantity: number, price: number): Promise<Order> {
-        return await api.limitOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, Sides.SELL)
+        return await api.limitOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, Sides.SELL, [])
     }
     
     /**
-     * Places a long/buy EXCHANGE order.
+     * Places a long/buy MARKET order.
      *
      * @param {number} quantity
      * @returns {Promise<Order>}
      * @memberof Trader
      */
     async buyAtMarket(quantity: number): Promise<Order> {
-        let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.BUY);
+        let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.BUY, []);
 
         if (! $.isLiveTrading()) {
             currentPosition.update(quantity);
@@ -63,7 +63,7 @@ export default class Trader {
      * @memberof Trader
      */
     async buyAt(quantity: number, price: number): Promise<Order> {
-        return await api.limitOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, Sides.BUY);
+        return await api.limitOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, Sides.BUY, []);
     }
     
     /**
@@ -99,7 +99,7 @@ export default class Trader {
             throw new Error(`Invalid "price". A sell startProfit order must have a price lower than store.getState().mainReducer.currentPrice.`);
         }
         
-        return await api.stopOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, side);
+        return await api.stopOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, side, []);
     }
     
     /**
@@ -113,7 +113,7 @@ export default class Trader {
      */
     async stopLossAt(side: string, price: number, quantity: number): Promise<Order> {
         $.validateSide(side);
-        return await api.stopOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, side);
+        return await api.stopOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, side, []);
     }
     
     /**

@@ -1,5 +1,5 @@
 export const enum orderTypes {
-    EXCHANGE = 'EXCHANGE',
+    MARKET = 'MARKET',
     LIMIT = 'LIMIT',
     STOP = 'STOP',
     TRAILING_STOP = 'TRAILING STOP',

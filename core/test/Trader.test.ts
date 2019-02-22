@@ -3,6 +3,8 @@ import store, { actions, selectors } from "../store";
 import currentPosition from "../services/Positions";
 import Order from "../models/Order";
 import $ from "../services/Helpers";
+import { orderTypes } from "../exchanges/Bitfinex/types";
+import { Sides } from "../store/types";
 
 const trader: Trader = new Trader();
 
@@ -38,11 +40,11 @@ it('Should include fee when opening and closing a position', async () => {
 
 it('Should go short', async () => {
     const order: Order = await trader.sellAtMarket($.positionSizeToQuantity(100, store.getState().mainReducer.currentPrice));
-    expect(order.type).toBe('EXCHANGE');
+    expect(order.type).toBe(orderTypes.MARKET);
     expect(order.isNew()).toBeFalsy();
     expect(order.isExecuted()).toBeTruthy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice);
-    expect(order.side).toBe('sell');
+    expect(order.side).toBe(Sides.SELL);
     expect(order.quantity).toBe(-2);
 
     expect(store.getState().mainReducer.currentBalance).toBe(900);
@@ -52,11 +54,11 @@ it('Should go short', async () => {
 
 it('Should go long', async () => {
     const order: Order = await trader.buyAtMarket($.positionSizeToQuantity(100, store.getState().mainReducer.currentPrice));
-    expect(order.type).toBe('EXCHANGE');
+    expect(order.type).toBe(orderTypes.MARKET);
     expect(order.isNew()).toBeFalsy();
     expect(order.isExecuted()).toBeTruthy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice);
-    expect(order.side).toBe('buy');
+    expect(order.side).toBe(Sides.BUY);
     expect(order.quantity).toBe(2);
 
     expect(store.getState().mainReducer.currentBalance).toBe(900);
@@ -73,13 +75,13 @@ it('Should reduce the size of Position when reaching a certain price', async () 
     expect(store.getState().mainReducer.quantity).toBe(2);
     expect(store.getState().mainReducer.currentBalance).toBe(900);
 
-    const order: Order = await trader.reducePositionAt('sell', store.getState().mainReducer.currentPrice + 10, 1);
+    const order: Order = await trader.reducePositionAt(Sides.SELL, store.getState().mainReducer.currentPrice + 10, 1);
 
-    expect(order.type).toBe('LIMIT');
+    expect(order.type).toBe(orderTypes.LIMIT);
     expect(order.isNew()).toBeTruthy();
     expect(order.isReduceOnly()).toBeTruthy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice + 10);
-    expect(order.side).toBe('sell');
+    expect(order.side).toBe(Sides.SELL);
     expect(order.quantity).toBe(-1);
 });
 
@@ -87,20 +89,20 @@ it('Should open a position using a STOP order', async () => {
     await expect(trader.startProfitAt('long', store.getState().mainReducer.currentPrice + 10, store.getState().mainReducer.currentPrice + 10))
         .rejects
         .toThrow(`Invalid "side"`);
-    await expect(trader.startProfitAt('buy', store.getState().mainReducer.currentPrice - 10, store.getState().mainReducer.currentPrice + 10))
+    await expect(trader.startProfitAt(Sides.BUY, store.getState().mainReducer.currentPrice - 10, store.getState().mainReducer.currentPrice + 10))
         .rejects
         .toThrow(`Invalid "price"`);
-    await expect(trader.startProfitAt('sell', store.getState().mainReducer.currentPrice + 10, store.getState().mainReducer.currentPrice + 10))
+    await expect(trader.startProfitAt(Sides.SELL, store.getState().mainReducer.currentPrice + 10, store.getState().mainReducer.currentPrice + 10))
         .rejects
         .toThrow(`Invalid "price"`);
 
-    const order: Order = await trader.startProfitAt('buy', store.getState().mainReducer.currentPrice + 10, 1);
+    const order: Order = await trader.startProfitAt(Sides.BUY, store.getState().mainReducer.currentPrice + 10, 1);
 
     expect(order.type).toBe('STOP');
     expect(order.isNew()).toBeTruthy();
     expect(order.isReduceOnly()).toBeFalsy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice + 10);
-    expect(order.side).toBe('buy');
+    expect(order.side).toBe(Sides.BUY);
     expect(order.quantity).toBe(1);
 });
 
@@ -112,13 +114,13 @@ it('Should submit a STOP order', async () => {
     await trader.buyAtMarket($.positionSizeToQuantity(100, store.getState().mainReducer.currentPrice))
     expect(store.getState().mainReducer.quantity).toBe(2);
 
-    const order: Order = await trader.stopLossAt('sell', store.getState().mainReducer.currentPrice - 10, 2);
+    const order: Order = await trader.stopLossAt(Sides.SELL, store.getState().mainReducer.currentPrice - 10, 2);
 
     expect(order.type).toBe('STOP');
     expect(order.isNew()).toBeTruthy();
     expect(order.isReduceOnly()).toBeFalsy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice - 10);
-    expect(order.side).toBe('sell');
+    expect(order.side).toBe(Sides.SELL);
     expect(order.quantity).toBe(-2);
 });
 
@@ -130,14 +132,14 @@ it('Should submit a TRAILING STOP order', async () => {
     await trader.buyAtMarket($.positionSizeToQuantity(100, store.getState().mainReducer.currentPrice))
     expect(store.getState().mainReducer.quantity).toBe(2);
 
-    const order: Order = await trader.trailingStopOrder('sell', 10, 2);
+    const order: Order = await trader.trailingStopOrder(Sides.SELL, 10, 2);
 
     expect(order.type).toBe('TRAILING STOP');
     expect(order.isNew()).toBeTruthy();
     expect(order.isTrailingStop()).toBeTruthy();
     expect(order.isReduceOnly()).toBeTruthy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice - 10);
-    expect(order.side).toBe('sell');
+    expect(order.side).toBe(Sides.SELL);
     expect(order.quantity).toBe(-2);
 });
 
@@ -149,20 +151,20 @@ it('Should submit a STOP order that closes the position', async () => {
     await trader.buyAtMarket($.positionSizeToQuantity(100, store.getState().mainReducer.currentPrice))
     expect(store.getState().mainReducer.quantity).toBe(2);
 
-    const order: Order = await trader.closeAtStopLossAt('sell', store.getState().mainReducer.currentPrice - 10, 2);
+    const order: Order = await trader.closeAtStopLossAt(Sides.SELL, store.getState().mainReducer.currentPrice - 10, 2);
 
     expect(order.type).toBe('STOP');
     expect(order.isNew()).toBeTruthy();
     expect(order.isTrailingStop()).toBeFalsy();
     expect(order.isClose()).toBeTruthy();
     expect(order.price).toBe(store.getState().mainReducer.currentPrice - 10);
-    expect(order.side).toBe('sell');
+    expect(order.side).toBe(Sides.SELL);
     expect(order.quantity).toBe(-2);
 });
 
 it('Should cancel a single order', async () => {
-    const orderToCancel: Order = await trader.startProfitAt('buy', store.getState().mainReducer.currentPrice + 10, 2);
-    const orderToRemainActive: Order = await trader.startProfitAt('buy', store.getState().mainReducer.currentPrice + 20, 4);
+    const orderToCancel: Order = await trader.startProfitAt(Sides.BUY, store.getState().mainReducer.currentPrice + 10, 2);
+    const orderToRemainActive: Order = await trader.startProfitAt(Sides.BUY, store.getState().mainReducer.currentPrice + 20, 4);
 
     expect(selectors.getOrder(orderToCancel.id).isActive()).toBeTruthy();
     expect(selectors.getOrder(orderToRemainActive.id).isActive()).toBeTruthy();
@@ -178,8 +180,8 @@ it('Should cancel all active orders', async () => {
     // and after executing cancelAllOrders() only the ACTIVE
     // orders must get canceled and not EXECUTED ones. 
     const executedOrder: Order = await trader.buyAtMarket(1);
-    const orderToCancel1: Order = await trader.startProfitAt('buy', store.getState().mainReducer.currentPrice + 10, 2);
-    const orderToCancel2: Order = await trader.startProfitAt('sell', store.getState().mainReducer.currentPrice - 10, 2);
+    const orderToCancel1: Order = await trader.startProfitAt(Sides.BUY, store.getState().mainReducer.currentPrice + 10, 2);
+    const orderToCancel2: Order = await trader.startProfitAt(Sides.SELL, store.getState().mainReducer.currentPrice - 10, 2);
 
     expect(selectors.getOrder(orderToCancel1.id).isActive()).toBeTruthy();
     expect(selectors.getOrder(orderToCancel2.id).isActive()).toBeTruthy();

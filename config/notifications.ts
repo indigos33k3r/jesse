@@ -1,5 +1,5 @@
 import Driver from 'jesse-notifications-telegram';
-import NotificationsDriverInterface from "../core/services/Notifier/NotificationsDriverInterface";
+import NotificationsDriverInterface from "../core/services/Notifier/types";
 
 interface NotificationsConfigInterface {
     enable: boolean;

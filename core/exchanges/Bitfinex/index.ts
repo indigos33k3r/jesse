@@ -1,23 +1,24 @@
 import crypto from 'crypto';
 import _ from 'lodash';
 import WebSocket from 'ws';
-import APIInterface from '../../interfaces/APIInterface';
 import { BitfinexError, BitfinexOrder, BitfinexPosition, CandlesChannel, orderTypes } from './types';
 import config from '../../../config';
 import $ from '../../services/Helpers';
 import store, { actions, selectors } from '../../store';
 import Order from '../../models/Order';
-import { orderStatuses } from '../../store/types';
+import { orderStatuses, Sides } from '../../store/types';
 import currentPosition from '../../services/Positions';
 import Candle from '../../models/Candle';
-
+import Exchange from '../Exchange';
+import { getOrderFlags, getError, transformPositionData } from './utilities';
 /**
  * To connect to Bitfinex's market via WS connection. Currently supports margin trading only.
  *
- * @class API
- * @implements {APIInterface}
+ * @export
+ * @class Bitfinex
+ * @extends {Exchange}
  */
-class API implements APIInterface {
+export default class Bitfinex extends Exchange {
     ws: WebSocket;
     initiallyOpened: boolean = false;
     isAuthenticated: boolean = false;
@@ -25,19 +26,23 @@ class API implements APIInterface {
     isSubmittingOrders: boolean = false;
 
     constructor() {
+        super();
+
+        if (! $.isLiveTrading()) {
+            $.hardError('Cannot use Bitfinex market for backTesting.');
+        }
+
         this.init();
     }
 
     init() {
-        if (!$.isLiveTrading()) return;
-
-        this.ws = new WebSocket(config.exchanges.Bitfinex.baseURL);
+        this.ws = new WebSocket(config.exchanges.exchanges.Bitfinex.baseURL);
 
         this.ws.on('open', () => {
             store.dispatch(
                 actions.logWarning(
                     `Successfully ${this.initiallyOpened ? 'reconnected' : 'subscribed'} to ${
-                        config.marketToTradeIn
+                        config.exchanges.marketToTradeIn
                     } via WS.`
                 )
             );
@@ -142,7 +147,7 @@ class API implements APIInterface {
             // error
             if (data.event === 'error') {
                 const error: BitfinexError = data;
-                store.dispatch(actions.logError(`[${error.code}:${this.getError(error.code)}] ${error.msg}`));
+                store.dispatch(actions.logError(`[${error.code}:${getError(error.code)}] ${error.msg}`));
 
                 if (error.code === 10100) {
                     this.isAuthenticated = true;
@@ -186,7 +191,7 @@ class API implements APIInterface {
      * @param data any[]
      */
     private closePosition(data: any[]) {
-        const pos: BitfinexPosition = this.transformPositionData(data);
+        const pos: BitfinexPosition = transformPositionData(data);
         // console.log(`Closing position`);
         // console.log(pos);
 
@@ -204,7 +209,7 @@ class API implements APIInterface {
     private syncPositions(data: any[]) {
         const positions: BitfinexPosition[] = [];
 
-        data.forEach(item => positions.push(this.transformPositionData(item)));
+        data.forEach(item => positions.push(transformPositionData(item)));
 
         positions.forEach(pos => {
             if (pos.symbol === currentPosition.symbol()) {
@@ -221,7 +226,7 @@ class API implements APIInterface {
      * @param data any[]
      */
     private openPosition(data: any[]) {
-        const pos: BitfinexPosition = this.transformPositionData(data);
+        const pos: BitfinexPosition = transformPositionData(data);
         
         store.dispatch(actions.updateQuantity(pos.amount));
         store.dispatch(actions.updateEntryPrice(pos.basePrice));
@@ -316,8 +321,8 @@ class API implements APIInterface {
     }
 
     authenticate() {
-        const apiKey = config.exchanges.Bitfinex.apiKey;
-        const apiSecret = config.exchanges.Bitfinex.apiSecret;
+        const apiKey = config.exchanges.exchanges.Bitfinex.apiKey;
+        const apiSecret = config.exchanges.exchanges.Bitfinex.apiSecret;
         const authNonce = Date.now() * 1000;
         const authPayload = 'AUTH' + authNonce;
         const hmac = crypto.createHmac('sha384', apiSecret);
@@ -332,7 +337,7 @@ class API implements APIInterface {
                     if (data.status === 'OK') {
                         resolve();
                     } else if (data.status === 'FAILED') {
-                        reject(`[${data.code}:${this.getError(data.code)}] ${data.msg}`);
+                        reject(`[${data.code}:${getError(data.code)}] ${data.msg}`);
                     }
                 }
             });
@@ -402,9 +407,9 @@ class API implements APIInterface {
                             type: order.type,
                             symbol: 't' + order.symbol,
                             amount: `${order.amount}`,
-                            flags: this.getOrderFlags(order.flags)
+                            flags: getOrderFlags(order.flags)
                         },
-                        order.type !== orderTypes.EXCHANGE ? { price: `${order.price}` } : null,
+                        order.type !== orderTypes.MARKET ? { price: `${order.price}` } : null,
                         order.type === orderTypes.TRAILING_STOP ? { price_trailing: `${order.price_trailing}` } : null,
                         order.type === orderTypes.STOP_LIMIT ? { price_aux_limit: `${order.price_aux_limit}` } : null,
                         !_.isUndefined(order.price_oco_stop) ? { price_oco_stop: `${order.price_oco_stop}` } : null
@@ -429,27 +434,12 @@ class API implements APIInterface {
             id: $.generateUniqueID(),
             symbol,
             side,
-            type: orderTypes.EXCHANGE,
+            type: orderTypes.MARKET,
             flag: this.getExecInst(flags),
             quantity: amount,
             price: store.getState().mainReducer.currentPrice,
-            status: 'EXECUTED'
+            status: orderStatuses.EXECUTED
         });
-
-        if ($.isBackTesting()) {
-            return new Promise<Order>(resolve => {
-                store.dispatch(actions.addOrder(order));
-
-                $.printToConsole(
-                    `Executed a ${order.side} ${order.type} order at the price of ${order.price} for the quantity of ${
-                        order.quantity
-                    }`,
-                    'green'
-                );
-
-                resolve(order);
-            });
-        }
 
         const orderToSubmit: BitfinexOrder = {
             cid: order.id,
@@ -494,13 +484,6 @@ class API implements APIInterface {
             status: orderStatuses.ACTIVE
         });
 
-        if ($.isBackTesting()) {
-            return new Promise<Order>(resolve => {
-                store.dispatch(actions.addOrder(order));
-                resolve(order);
-            });
-        }
-
         const orderToSubmit: BitfinexOrder = {
             cid: order.id,
             symbol,
@@ -543,19 +526,12 @@ class API implements APIInterface {
             flag: this.getExecInst(flags),
             quantity: amount,
             price:
-                side === 'buy'
+                side === Sides.BUY
                     ? store.getState().mainReducer.currentPrice + trailingPrice
                     : store.getState().mainReducer.currentPrice - trailingPrice,
             trailingPrice,
-            status: 'ACTIVE'
+            status: orderStatuses.ACTIVE
         });
-
-        if ($.isBackTesting()) {
-            return new Promise<Order>((resolve, reject) => {
-                store.dispatch(actions.addOrder(order));
-                resolve(order);
-            });
-        }
 
         const orderToSubmit: BitfinexOrder = {
             cid: order.id,
@@ -598,15 +574,8 @@ class API implements APIInterface {
             flag: this.getExecInst(flags),
             quantity: amount,
             price,
-            status: 'ACTIVE'
+            status: orderStatuses.ACTIVE
         });
-
-        if ($.isBackTesting()) {
-            return new Promise<Order>(resolve => {
-                store.dispatch(actions.addOrder(order));
-                resolve(order);
-            });
-        }
 
         const orderToSubmit: BitfinexOrder = {
             cid: order.id,
@@ -622,175 +591,68 @@ class API implements APIInterface {
         store.dispatch(actions.addOrder(order));
         return order;
     }
-
+    
     /**
      * Cancels all the active orders.
+     *
+     * @returns {Promise<string>}
+     * @memberof Bitfinex
      */
-    async cancelAllOrders() {
+    async cancelAllOrders(): Promise<string> {
         return new Promise((resolve, reject) => {
-            if ($.isBackTesting()) {
-                store
-                    .getState()
-                    .orders.filter(item => item.isNew())
-                    .forEach(item => item.cancel());
+            const activeOrders: Order[] = store.getState().orders.filter(item => item.isActive());
 
-                resolve(`${selectors.countOfActiveOrders()} orders have been successfully cancelled.`);
-            } else if ($.isLiveTrading()) {
-                const activeOrders: Order[] = store.getState().orders.filter(item => item.isActive());
+            activeOrders.forEach(async order => {
+                await this.cancelOrder(order.id);
+            });
 
-                activeOrders.forEach(async order => {
-                    await this.cancelOrder(order.id);
-                });
-
-                resolve(`${selectors.countOfActiveOrders()} orders have been successfully cancelled.`);
-            }
+            resolve(`${selectors.countOfActiveOrders()} orders have been successfully cancelled.`);
         });
     }
-
+    
     /**
      * Cancels a single order.
      *
-     * @param orderID
+     * @param {number} orderID
+     * @returns {Promise<string>}
+     * @memberof Bitfinex
      */
-    async cancelOrder(orderID: number) {
+    async cancelOrder(orderID: number): Promise<string> {
         const order: Order = selectors.getOrder(orderID);
 
         return new Promise((resolve, reject) => {
-            if ($.isBackTesting()) {
-                order.cancel();
-                resolve(
-                    `The ${order.side} ${order.type} order at the price of ${order.price} for the quantity of ${
-                        order.quantity
-                    } has been successfully canceled.`
-                );
-            } else if ($.isLiveTrading()) {
-                this.ws.on('message', msg => {
-                    const data = JSON.parse(msg.toString());
+            this.ws.on('message', msg => {
+                const data = JSON.parse(msg.toString());
 
-                    if (Array.isArray(data) && data[0] === 0 && data[1] === 'n' && Array.isArray(data[2])) {
-                        if (data[2][1] === 'on-req' && Array.isArray(data[2][4]) && data[2][4][2] === order.id) {
-                            const message: string = data[2][data[2].length - 1];
+                if (Array.isArray(data) && data[0] === 0 && data[1] === 'n' && Array.isArray(data[2])) {
+                    if (data[2][1] === 'on-req' && Array.isArray(data[2][4]) && data[2][4][2] === order.id) {
+                        const message: string = data[2][data[2].length - 1];
 
-                            // success
-                            if (data[2][data[2].length - 2] === 'SUCCESS') {
-                                order.cancel();
-                                resolve(message);
-                            }
+                        // success
+                        if (data[2][data[2].length - 2] === 'SUCCESS') {
+                            order.cancel();
+                            resolve(message);
+                        }
 
-                            // fail
-                            else if (data[2][data[2].length - 2] === 'ERROR') {
-                                reject(message);
-                            }
+                        // fail
+                        else if (data[2][data[2].length - 2] === 'ERROR') {
+                            reject(message);
                         }
                     }
-                });
+                }
+            });
 
-                this.ws.send(
-                    JSON.stringify([
-                        0,
-                        'oc',
-                        null,
-                        {
-                            cid: order.id,
-                            cid_date: $.date(order.createdAt)
-                        }
-                    ])
-                );
-            }
+            this.ws.send(
+                JSON.stringify([
+                    0,
+                    'oc',
+                    null,
+                    {
+                        cid: order.id,
+                        cid_date: $.date(order.createdAt)
+                    }
+                ])
+            );
         });
     }
-
-    /**
-     * Detect the flag from the flags[] array.
-     *
-     * @param flags string[]
-     */
-    private getExecInst(flags: string[]): string {
-        if (_.includes(flags, 'ReduceOnly')) return 'ReduceOnly';
-        if (_.includes(flags, 'Close')) return 'Close';
-        return null;
-    }
-
-    getOrderFlags(flags: string[]): number {
-        const ReduceOnly: number = _.includes(flags, 'ReduceOnly') ? 2 ** 10 : 0;
-        const Close: number = _.includes(flags, 'Close') ? 2 ** 9 : 0;
-        const OCO: number = _.includes(flags, 'OCO') ? 2 ** 14 : 0;
-        const Hidden: number = _.includes(flags, 'Hidden') ? 2 ** 6 : 0;
-        const PostOnly: number = _.includes(flags, 'PostOnly') ? 2 ** 12 : 0;
-
-        return ReduceOnly + Close + OCO + Hidden + PostOnly;
-    }
-
-    /**
-     * translates the error using it's code number.
-     *
-     * @param code number
-     */
-    getError(code: number): string {
-        switch (code) {
-            case 11000:
-                return 'Not ready, try again later';
-            case 10200:
-                return 'Error in un-authentication request';
-            case 10114:
-                return 'Error in authentication request nonce';
-            case 10112:
-                return 'Error in authentication request signature';
-            case 10113:
-                return 'Error in authentication request encryption';
-            case 10111:
-                return 'Error in authentication request payload';
-            case 10100:
-                return 'Failed authentication';
-            case 10050:
-                return 'Configuration setup failed';
-            case 10020:
-                return 'Request parameters error';
-            case 10000:
-                return 'Unknown event';
-            case 10001:
-                return 'Unknown pair';
-            case 10305:
-                return 'Reached limit of open channels';
-            case 10300:
-                return 'Subscription failed (generic)';
-            case 10301:
-                return 'Already subscribed';
-            case 10302:
-                return 'Unknown channel';
-            case 10400:
-                return 'Subscription failed (generic) channel not found';
-            case 10401:
-                return 'Not subscribed';
-            case 20051:
-                return 'Stop/Restart Websocket Server (please reconnect)';
-            case 20060:
-                return 'Entering in Maintenance mode. Please pause any activity and resume after receiving the info message 20061 (it should take 120 seconds at most).';
-            case 20061:
-                return 'Maintenance ended. You can resume normal activity. It is advised to unsubscribe/subscribe again all channels.';
-            case 5000:
-                return 'Info message';
-
-            default:
-                return 'unknown error';
-        }
-    }
-
-    private transformPositionData(data: any[]): BitfinexPosition {
-        return {
-            symbol: data[0][0] === 't' ? data[0].slice(1) : data[0],
-            status: data[1],
-            amount: data[2],
-            basePrice: data[3],
-            marginFunding: data[4],
-            marginFundingType: data[5],
-            pl: data[6],
-            plPercentage: data[7],
-            priceLiq: data[8],
-            leverage: data[9]
-        };
-    }
 }
-
-const api: API = new API();
-export default api;
