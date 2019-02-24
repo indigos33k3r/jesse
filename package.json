@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Trades on crypto exchanges. ",
   "scripts": {
-    "test": "TRADING_TIMEFRAME=5m TIMEFRAMES=1m,5m TRADING_SYMBOL=ETHUSD SYMBOLS=ETHUSD jest", 
+    "test": "TRADING_TIMEFRAME=5m TIMEFRAMES=1m,5m STARTING_BALANCE=10000 COMPOUNDING_POSITION_SIZING=1 FEE=0 TRADING_SYMBOL=ETHUSD SYMBOLS=ETHUSD jest", 
     "backtest" : "TRADING_MODE=backtest ts-node index.ts", 
     "livetrade" : "TRADING_MODE=livetrade ts-node index.ts" 
   },
