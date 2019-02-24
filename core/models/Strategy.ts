@@ -41,7 +41,9 @@ export default abstract class Strategy {
      */
     async handleExecutedOrder(data: EventDataInterface) {
         // in case you're overwriting this method, don't forget to include this line
-        if ($.isBackTesting()) this.impactExecutedOrderOnPositionWhenBacktesting(data); 
+        if ($.isBackTesting()) {
+            this.impactExecutedOrderOnPositionWhenBacktesting(data); 
+        }
 
         if (!_.isUndefined(this.openPositionOrder) && data.order.id === this.openPositionOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.OPEN_POSITION);
@@ -124,12 +126,67 @@ export default abstract class Strategy {
     }
 
     /**
-     * Resets everything so that the strategy can keep looking for new trades. 
-     * Overwrite this method inside your own strategy if you need otherwise. 
+     * Execution steps to accept loss already, instead of 
+     * waiting to previous stopLoss price to be reached. 
+     * (assuming there's already an open position)
      *
+     * @returns {Promise<void>}
      * @memberof Strategy
      */
-    async reset() {
+    async executeAcceptLossEarly(): Promise<void> {}
+
+    /**
+     * Execution steps to accept profit already, instead of 
+     * waiting to previous takeProfit price to be reached. 
+     * (assuming there's already an open position)
+     *
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    async executeTakeProfitEarly(): Promise<void> {}
+
+    /**
+     * Execution steps to open a "long" position. 
+     *
+     * @abstract
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    abstract async executeBuy(): Promise<void>;
+
+    /**
+     * Execution steps to open a "short" position. 
+     *
+     * @abstract
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    abstract async executeSell(): Promise<void>; 
+    
+    /**
+     * Execution steps to add size of the already open position. 
+     *
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    async executeIncreasePositionSize(): Promise<void> {}
+
+    /**
+     * Execution steps to reduce from size of the already open position. 
+     *
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    async executeReducePositionSize(): Promise<void> {}
+    
+    /**
+     * cancels everything so that the strategy can keep looking for new trades. 
+     * Overwrite this method inside your own strategy if you need otherwise. 
+     *
+     * @returns {Promise<void>}
+     * @memberof Strategy
+     */
+    async executeCancel(): Promise<void> {
         await this.trader.cancelAllOrders();
 
         this.stopLossOrder = undefined;
@@ -152,12 +209,127 @@ export default abstract class Strategy {
      * @abstract
      * @memberof Strategy
      */
-    abstract check();
+    async check() {
+        if (this.shouldAcceptLossEarly()) {
+            await this.executeAcceptLossEarly();
+        }
+
+        if (this.shouldTakeProfitEarly()) {
+            await this.executeTakeProfitEarly(); 
+        }
+
+        if (this.shouldCancel()) {
+            await this.executeCancel();
+        }
+
+        if (this.shouldWait()) {
+            return;
+        }
+
+        if (this.shouldBuy()) {
+            await this.executeBuy(); 
+        }
+
+        if (this.shouldSell()) {
+            await this.executeSell(); 
+        }
+
+        if (this.shouldIncreasePositionSize()) {
+            await this.executeIncreasePositionSize(); 
+        }
+
+        if (this.shouldReducePositionSize()) {
+            await this.executeReducePositionSize(); 
+        }
+    }
+    
+    /**
+     * Should it executeCancel(), and keep looking for trades with a fresh pair of eyes.
+     *
+     * @abstract
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    abstract shouldCancel(): boolean; 
 
     /**
-     * What should happen after the openPositionOrder is executed and a new position has been opened. 
-     * Overwrite this method inside your own strategy if you need otherwise. 
+     * Should it wait, and do nothing? Have in mind, a strategy gets 
+     * executed on every candle update. Hence, it's useful 
+     * to know when wait(), and not to do anything. 
      *
+     * @abstract
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    abstract shouldWait(): boolean; 
+    
+    /**
+     * Should it buy() now? 
+     *
+     * @abstract
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    abstract shouldBuy(): boolean; 
+    
+    /**
+     * Should it sell() now? 
+     *
+     * @abstract
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    abstract shouldSell(): boolean; 
+    
+    /**
+     * Should it increase the size of position? (assuming
+     * there's already an open position)
+     *
+     * @returns
+     * @memberof Strategy
+     */
+    shouldIncreasePositionSize(): boolean {
+        return false; 
+    }
+
+    /**
+     * Should it reduce the size of position? (assuming
+     * there's already an open position)
+     *
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    shouldReducePositionSize(): boolean {
+        return false; 
+    }
+
+    /**
+     * Should it takeProfit() now, instead waiting for the
+     * this.takeProfitPrice to be reached? (assuming
+     * there's already an open position)
+     *
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    shouldTakeProfitEarly(): boolean {
+        return false; 
+    }
+
+    /**
+     * Should it takeLoss() now? (assuming there's already an open position)
+     *
+     * @returns {boolean}
+     * @memberof Strategy
+     */
+    shouldAcceptLossEarly(): boolean {
+        return false; 
+    }
+
+    /**
+     * What should happen after the openPositionOrder() is executed
+     * and a new position has been opened. Overwrite this method
+     * inside your own strategy in case you need otherwise. 
+     * 
      * @memberof Strategy
      */
     async onOpenPosition() {
@@ -196,7 +368,7 @@ export default abstract class Strategy {
             Logger.warning(`StopLoss has been executed. Looking for next trade...`);
         }
 
-        await this.reset();
+        await this.executeCancel();
     };
 
     /**
@@ -209,7 +381,7 @@ export default abstract class Strategy {
             Logger.warning(`Sweet! Take profit order has been executed. Let's look for the next hunt.`);
         }
         
-        await this.reset();
+        await this.executeCancel();
     };
 
     /**
@@ -365,6 +537,7 @@ export default abstract class Strategy {
                 break;
 
             default:
+                Logger.error('unsupported tradeLogType');
                 throw new Error('unsupported tradeLogType');
         }
     }

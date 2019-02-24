@@ -247,7 +247,7 @@ export class Jesse {
             } catch (error) {
                 if (error instanceof ConflictingOrders) {
                     store.dispatch(actions.increaseCountOfConflictingOrders());
-                    await this.strategy.reset(); 
+                    await this.strategy.executeCancel(); 
                 } else {
                     throw error;
                 }
@@ -279,7 +279,7 @@ export class Jesse {
                         });
                     } catch (error) {
                         if (error instanceof EmptyPosition) {
-                            await this.strategy.reset(); 
+                            await this.strategy.executeCancel(); 
                         } else {
                             throw error;
                         }
