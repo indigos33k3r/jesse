@@ -10,10 +10,8 @@ import Candle from '../models/Candle';
 import store, { actions } from '../store';
 import { reduxActionLogs } from '../store/reducers/mainReducer';
 import { ActionTypes, supportedTimeFrames } from '../store/types';
-// import ScalpingStrategy from '../strategies/ScalpingStrategy';
 import Strategy from './Strategy';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
-import TestStrategy from '../test/data/TestStrategy';
 import Report from '../services/Report';
 import Table from '../services/Table';
 import { ActionInterface } from '../interfaces/ActionInterface';
@@ -21,6 +19,7 @@ import Notifier from '../services/Notifier';
 import Statistics from '../services/Statistics';
 import Dashboard from '../services/Dashboard';
 import Order from './Order';
+import ScalpingStrategy from '../../strategies/ScalpingStrategy';
 
 /**
  * This class does basically everything that Jesse Livermore would have wished he could do.
@@ -36,7 +35,7 @@ export class Jesse {
      * @param {ScalpingStrategy} strategy
      * @memberof Jesse
      */
-    constructor(strategy: Strategy = new TestStrategy()) {
+    constructor(strategy: Strategy = new ScalpingStrategy()) {
         this.strategy = strategy;
     }
 
@@ -131,7 +130,11 @@ export class Jesse {
             store.dispatch(actions.logError(`There was ${store.getState().mainReducer.conflictingOrdersCount} conflicting orders.`))
         }
 
-        Table.keyValue(Statistics.trades(store.getState().trades), 'Trades');
+        if (store.getState().trades.length) {
+            Table.keyValue(Statistics.trades(store.getState().trades), 'Trades');
+        } else {
+            $.printToConsole(`No trades were made via this strategy. Either modify your target time period, or your strategy.`, `yellow`)
+        }
     }
 
     /**
