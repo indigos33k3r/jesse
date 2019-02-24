@@ -388,9 +388,8 @@ const $ = {
      * @param type string
      */
     printToConsole(text: string, type: string = `black`) {
-        // Do not print if we're in backTest mode.
-        if (this.isBackTesting() && !this.isDebugging()) return;
-        if (config.app.tradingMode === 'fitness') return;
+        // Do not print if we're in fitness mode.
+        if ($.isFitting()) return;
         if (config.app.isTesting) return;
 
         switch (type) {
