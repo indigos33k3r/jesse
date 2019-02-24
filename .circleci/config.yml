@@ -24,6 +24,9 @@ jobs:
 
       - run: npm install
 
+      # generate .env file
+      - run: cp .env.example .env
+
       - save_cache:
           paths:
             - node_modules
