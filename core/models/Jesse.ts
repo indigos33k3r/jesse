@@ -2,24 +2,24 @@ import _cliProgress from 'cli-progress';
 import jsonfile from 'jsonfile';
 import _ from 'lodash';
 import config from '../../config';
+import Router from '../../strategies/Router';
 import ConflictingOrders from '../exceptions/ConflictingOrders';
 import EmptyPosition from '../exceptions/EmptyPosition';
-import $ from '../services/Helpers';
+import { ActionInterface } from '../interfaces/ActionInterface';
 import { CandleSetInterface } from '../interfaces/CandleSetInterface';
 import Candle from '../models/Candle';
+import Dashboard from '../services/Dashboard';
+import $ from '../services/Helpers';
+import Notifier from '../services/Notifier';
+import Report from '../services/Report';
+import Statistics from '../services/Statistics';
+import Table from '../services/Table';
 import store, { actions } from '../store';
 import { reduxActionLogs } from '../store/reducers/mainReducer';
 import { ActionTypes, supportedTimeFrames } from '../store/types';
+import Order from './Order';
 import Strategy from './Strategy';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
-import Report from '../services/Report';
-import Table from '../services/Table';
-import { ActionInterface } from '../interfaces/ActionInterface';
-import Notifier from '../services/Notifier';
-import Statistics from '../services/Statistics';
-import Dashboard from '../services/Dashboard';
-import Order from './Order';
-import ScalpingStrategy from '../../strategies/ScalpingStrategy';
 
 /**
  * This class does basically everything that Jesse Livermore would have wished he could do.
@@ -29,20 +29,31 @@ import ScalpingStrategy from '../../strategies/ScalpingStrategy';
  */
 export class Jesse {
     strategy: Strategy;
-
+    
     /**
      * Creates an instance of Jesse.
-     * @param {ScalpingStrategy} strategy
+     *
+     * @param {Strategy} [strategy]
      * @memberof Jesse
      */
-    constructor(strategy: Strategy = new ScalpingStrategy()) {
-        this.strategy = strategy;
+    constructor(strategy?: Strategy) {
+        if (strategy) {
+            this.strategy = strategy;
+        } else {
+            let configValue = Router.symbols.find(item => item.symbol === store.getState().config.tradingSymbol);
+            if (configValue) {
+                this.strategy = configValue.strategy; 
+            } else {
+                this.strategy = Router.default; 
+            }
+        }
     }
 
     /**
      * Trades with live data on exchange. At this point, you'll either make a lot, or lose a lot.
      *
      * @returns real money ($ $)
+     * @memberof Jesse
      */
     async liveTrade() {
         Dashboard.liveTrade();

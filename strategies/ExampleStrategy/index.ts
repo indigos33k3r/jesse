@@ -15,7 +15,7 @@ export default class ExampleStrategy extends Strategy {
     time: string; 
 
     constructor() {
-        super('A strategy used for testing', '0.0.1', 0);
+        super('An example strategy', '0.0.2', 0);
     }
 
     async update() {
