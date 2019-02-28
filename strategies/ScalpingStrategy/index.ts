@@ -1,4 +1,3 @@
-import Indicators from 'jesse-indicators';
 import _ from 'lodash';
 import config from '../../config';
 import Candle from '../../core/models/Candle';
@@ -9,6 +8,7 @@ import currentPosition from '../../core/services/Positions';
 import store, { selectors } from '../../core/store';
 import { Sides, TradeTypes } from '../../core/store/types';
 import HyperParametersInterface from './types';
+import Indicators from '../../core/services/Indicators';
 
 // Initial hyperParameters:
 const defaultHyperParameters: HyperParametersInterface = {
@@ -42,8 +42,8 @@ export default class ScalpingStrategy extends Strategy {
             ? store.getState().mainReducer.currentBalance
             : config.app.positionSize;
 
-        this.EMA8 = Indicators.EMA($.pluckCandles(selectors.getTradingCandles(), 'close'), 8);
-        this.EMA21 = Indicators.EMA($.pluckCandles(selectors.getTradingCandles(), 'close'), 21);
+        this.EMA8 = Indicators.EMA(8);
+        this.EMA21 = Indicators.EMA(21);
 
         this.currentCandle = selectors.getCurrentTradingCandle();
     }
