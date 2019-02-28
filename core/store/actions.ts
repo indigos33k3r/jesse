@@ -75,6 +75,12 @@ export function addCandle(candle: Candle): ActionInterface {
         payload: candle
     }
 }
+// export function quickAddCandle(candle: Candle): ActionInterface {
+//     return {
+//         type: types.QUICK_ADD_CANDLE, 
+//         payload: candle
+//     }
+// }
 export function batchAddCandles(candles: Candle[]): ActionInterface {
     return {
         type: types.BATCH_ADD_CANDLES, 
@@ -118,6 +124,12 @@ export function setTradingSymbol(symbol: string): ActionInterface {
     return {
         type: types.SET_TRADING_SYMBOL, 
         payload: symbol
+    };
+}
+export function setTradingTimeFrame(timeFrame: string): ActionInterface {
+    return {
+        type: types.SET_TRADING_TIMEFRAME, 
+        payload: timeFrame
     };
 }
 export function setTradingFee(fee: number): ActionInterface {
