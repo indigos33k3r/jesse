@@ -1,9 +1,9 @@
-import store, { actions, selectors } from '../../store';
-import { supportedSymbols, supportedTimeFrames } from '../../store/types';
-import Indicators from '.';
 import JI from 'jesse-indicators';
+import Indicators from '.';
 import Candle from '../../models/Candle';
 import fakeCandle from '../../models/factories/CandleFactory';
+import store, { actions } from '../../store';
+import { supportedSymbols, supportedTimeFrames } from '../../store/types';
 
 beforeEach(() => {
     store.dispatch(actions.resetState());
