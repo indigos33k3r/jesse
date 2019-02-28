@@ -212,6 +212,7 @@ export class Jesse {
         // progress-bar begins
         if ($.isBackTesting() && !$.isFitting() && !$.isTesting() && !$.isDebugging() && config.logging.items.progressBar) {
             progressBar.start(candles.length);
+            console.time('Executed backtest simulation in');
         }
 
         function requiredOneMinuteCandlePerTimeFrame(timeFrame: string): number {
@@ -239,15 +240,11 @@ export class Jesse {
         }
 
         // loop through history
-        for (let index = 0; index < candles.length; index++) {
+        store.dispatch(actions.addCandle(candles[0]));
+        for (let index = 1; index < candles.length; index++) {
             // add 1m candle
             store.dispatch(actions.addCandle(candles[index]));
             store.dispatch(actions.updateCurrentTime(candles[index].timestamp));
-            // fake currentTime. Notice that add 1 minute to because our candle's timestamps are 
-            // representing the beginning of that period of time but we need the end of it. 
-            // store.dispatch(actions.updateCurrentTime(
-            //     $.moment(candles[index].timestamp).add(1, 'minute').format()
-            // ));
 
             // progress-bar updates
             if ($.isBackTesting() && config.logging.items.progressBar) progressBar.update(index);
@@ -325,10 +322,7 @@ export class Jesse {
                     continue;
                 }
 
-                if (
-                    index !== 0 &&
-                    (index + 1) % requiredOneMinuteCandlePerTimeFrame(config.app.timeFramesToConsider[k]) === 0
-                ) {
+                if ((index + 1) % requiredOneMinuteCandlePerTimeFrame(config.app.timeFramesToConsider[k]) === 0) {
                     const generatedCandle: Candle = $.generateCandleFromOneMinutes(
                         config.app.timeFramesToConsider[k],
                         candles.slice(
@@ -349,7 +343,12 @@ export class Jesse {
             progressBar.update(candles.length);
             progressBar.stop();
             if (! $.isTesting()) {
-                console.log(`Executed backtest simulation in: ${$.durationForHuman(new Date().valueOf() - store.getState().mainReducer.startTime)}`, `\n`);
+                let executionTime: number = new Date().valueOf() - store.getState().mainReducer.startTime; 
+                if (executionTime < 10000) {
+                    console.timeEnd('Executed backtest simulation in'); 
+                } else {
+                    console.log(`Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
+                }
             } 
         }
     }

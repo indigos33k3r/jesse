@@ -32,13 +32,25 @@ export function candlesReducer(state: CandleSetInterface = initialState, action?
             return clonedState; 
         case ActionTypes.ADD_CANDLE:
             return addCandle(state, action.payload);
+        // case ActionTypes.QUICK_ADD_CANDLE:
+        //     const symbols = _.clone(state.symbols);
+        //     symbols[0].timeFrames[0].candles.push(action.payload);
+
+        //     return {
+        //         symbols
+        //     }; 
+            // state.symbols[0].timeFrames[0].candles.push(action.payload);
+
+            // return {
+            //     symbols: state.symbols
+            // }; 
 
         default:
             return state;
     }
 
     function addCandle(state, candle: Candle): CandleSetInterface {
-        const symbols = _.cloneDeep(state.symbols);
+        const symbols = _.clone(state.symbols);
         const symbol = symbols.find(item => item.symbol === candle.symbol);
         if (symbol !== undefined) {
             const timeFrame = symbol.timeFrames.find(item => item.timeFrame === candle.timeFrame);
