@@ -32,18 +32,13 @@ export function candlesReducer(state: CandleSetInterface = initialState, action?
             return clonedState; 
         case ActionTypes.ADD_CANDLE:
             return addCandle(state, action.payload);
-        // case ActionTypes.QUICK_ADD_CANDLE:
-        //     const symbols = _.clone(state.symbols);
-        //     symbols[0].timeFrames[0].candles.push(action.payload);
+        case ActionTypes.QUICK_ADD_CANDLE:
+            const symbols = _.clone(state.symbols);
+            symbols[0].timeFrames[0].candles.push(action.payload);
 
-        //     return {
-        //         symbols
-        //     }; 
-            // state.symbols[0].timeFrames[0].candles.push(action.payload);
-
-            // return {
-            //     symbols: state.symbols
-            // }; 
+            return {
+                symbols
+            }; 
 
         default:
             return state;

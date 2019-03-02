@@ -7,7 +7,7 @@ export default {
     // here you can filter items that you intend to see when debugMode is enabled. (work in progress)
     items: {
         orderSubmission: true, 
-        shorterPeriodCandles: true, 
+        shorterPeriodCandles: false, 
         executedOrderDetection: true, 
         executedOrderStep: true, 
         activePosition: true, 

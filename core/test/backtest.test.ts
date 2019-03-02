@@ -154,6 +154,6 @@ it('Should log a warning for not having enough candles to execute the strategy',
 
     // expect it to be 2 warnings since the third time would be the charm
     expect(
-        store.getState().logs.warnings.map(item => item.message.startsWith('TestStrategy requires 3 candles to begin executing,')).length
+        store.getState().logs.warnings.filter(item => item.message.startsWith('TestStrategy requires 3 candles to begin executing,')).length
     ).toBe(2);
 });

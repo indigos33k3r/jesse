@@ -1,4 +1,3 @@
-import $ from '../../core/services/Helpers';
 import Strategy from '../../core/models/Strategy';
 import store from '../../core/store';
 
@@ -15,7 +14,7 @@ export default class ExampleStrategy extends Strategy {
     time: string; 
 
     constructor() {
-        super('An example strategy', '0.0.2', 0);
+        super('An example strategy', '0.0.3', 0);
     }
 
     async update() {
@@ -30,10 +29,6 @@ export default class ExampleStrategy extends Strategy {
      * @memberof ExampleStrategy
      */
     shouldBuy(): boolean {
-        if (this.time === $.transformTimestamp(1547200800000)) {
-            return true; 
-        }
-
         return false; 
     }
 
@@ -49,23 +44,15 @@ export default class ExampleStrategy extends Strategy {
      * @memberof ExampleStrategy
      */
     shouldSell(): boolean {
-        if (this.time === $.transformTimestamp(1547203500000)) {
-            return true;
-        }
-
         return false;
     }
 
     async executeBuy(): Promise<void> {
-        this.openPositionOrder = await this.trader.buyAt(10.2041, 129.33);
-        this.stopLossPrice = 128.35;
-        this.takeProfitPrice = 131.29; 
+        // 
     }
 
     async executeSell(): Promise<void> {
-        this.openPositionOrder = await this.trader.sellAt(10, 128.05);
-        this.stopLossPrice = 128.52;
-        this.takeProfitPrice = 126.58; 
+        // 
     }
 
     shouldCancel(): boolean {

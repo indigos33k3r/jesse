@@ -55,14 +55,16 @@ it('Should work directly with the "jesse-indicators" package', () => {
 });
 
 it('Should return current SMA for currentTradingSymbol', () => {
-    expect(Indicators.SMA(3)).toEqual(2);
+    const indicators: Indicators = new Indicators(); 
+
+    expect(indicators.SMA(3)).toEqual(2);
 
     // current trading symbol 
-    expect(Indicators.SMA(3, supportedSymbols.ETHUSD)).toEqual(2);
-    expect(Indicators.SMA(3, undefined, supportedTimeFrames.fiveMinutes)).toEqual(2);
+    expect(indicators.SMA(3, supportedSymbols.ETHUSD)).toEqual(2);
+    expect(indicators.SMA(3, undefined, supportedTimeFrames.fiveMinutes)).toEqual(2);
 
-    expect(Indicators.SMA(3, supportedSymbols.BTCUSD)).toEqual(5);
-    expect(Indicators.SMA(3, supportedSymbols.BTCUSD, supportedTimeFrames.fiveMinutes)).toEqual(5);
+    expect(indicators.SMA(3, supportedSymbols.BTCUSD)).toEqual(5);
+    expect(indicators.SMA(3, supportedSymbols.BTCUSD, supportedTimeFrames.fiveMinutes)).toEqual(5);
 });
 
 /*
@@ -81,12 +83,27 @@ it('Should work directly with the "jesse-indicators"', () => {
 });
 
 it('Should return current EMA for currentTradingSymbol', () => {
-    expect(Indicators.EMA(2)).toEqual(2.5);
+    const indicators: Indicators = new Indicators(); 
+    
+    expect(indicators.EMA(2)).toEqual(2.5);
 
     // current trading symbol 
-    expect(Indicators.EMA(2, supportedSymbols.ETHUSD)).toEqual(2.5);
-    expect(Indicators.EMA(2, undefined, supportedTimeFrames.fiveMinutes)).toEqual(2.5);
+    expect(indicators.EMA(2, supportedSymbols.ETHUSD)).toEqual(2.5);
+    expect(indicators.EMA(2, undefined, supportedTimeFrames.fiveMinutes)).toEqual(2.5);
 
-    expect(Indicators.EMA(2, supportedSymbols.BTCUSD)).toEqual(5.5);
-    expect(Indicators.EMA(2, supportedSymbols.BTCUSD, supportedTimeFrames.fiveMinutes)).toEqual(5.5);
+    expect(indicators.EMA(2, supportedSymbols.BTCUSD)).toEqual(5.5);
+    expect(indicators.EMA(2, supportedSymbols.BTCUSD, supportedTimeFrames.fiveMinutes)).toEqual(5.5);
+});
+
+it('Should return current EMA based on currentPrice and previous EMA', () => {
+    const indicators: Indicators = new Indicators(); 
+    
+    expect(indicators.EMA(2)).toEqual(2.5);
+
+    const candle4: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.ETHUSD);
+    candle4.timestamp = '2016-10-29T00:15:00Z';
+    candle4.close = 4;
+    store.dispatch(actions.addCandle(candle4));
+
+    expect(indicators.EMA(2)).toBe(3.5);
 });

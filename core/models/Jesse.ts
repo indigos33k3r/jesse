@@ -16,9 +16,10 @@ import Statistics from '../services/Statistics';
 import Table from '../services/Table';
 import store, { actions } from '../store';
 import { reduxActionLogs } from '../store/reducers/mainReducer';
-import { ActionTypes, supportedTimeFrames } from '../store/types';
+import { ActionTypes, supportedTimeFrames, Sides } from '../store/types';
 import Order from './Order';
 import Strategy from './Strategy';
+import Logger from '../services/Logger';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
 
 /**
@@ -209,10 +210,11 @@ export class Jesse {
      * @memberof Jesse
      */
     async runBackTest(candles: Candle[]) {
+        console.time('Executed backtest simulation in');
+        
         // progress-bar begins
         if ($.isBackTesting() && !$.isFitting() && !$.isTesting() && !$.isDebugging() && config.logging.items.progressBar) {
             progressBar.start(candles.length);
-            console.time('Executed backtest simulation in');
         }
 
         function requiredOneMinuteCandlePerTimeFrame(timeFrame: string): number {
@@ -241,16 +243,20 @@ export class Jesse {
 
         // loop through history
         store.dispatch(actions.addCandle(candles[0]));
-        for (let index = 1; index < candles.length; index++) {
+        for (let index = 0; index < candles.length; index++) {
             // add 1m candle
-            store.dispatch(actions.addCandle(candles[index]));
+            store.dispatch(actions.quickAddCandle(candles[index]));
             store.dispatch(actions.updateCurrentTime(candles[index].timestamp));
 
             // progress-bar updates
-            if ($.isBackTesting() && config.logging.items.progressBar) progressBar.update(index);
+            if ($.isBackTesting() && config.logging.items.progressBar) {
+                progressBar.update(index);
+            }
 
             // print the 1m candle
-            if ($.isDebuggable('shorterPeriodCandles')) $.printCandle(candles[index], true);
+            if ($.isDebuggable('shorterPeriodCandles')) {
+                $.printCandle(candles[index], true);
+            }
 
             // validate for conflicting orders. Without this, there may be few conflicting orders causing Jesse to break.
             try {
@@ -274,12 +280,7 @@ export class Jesse {
                     store.getState().orders[k].execute();
 
                     if ($.isDebuggable('executedOrderDetection')) {
-                        $.printToConsole(
-                            `Order: ${store.getState().orders[k].id} has been executed at ${
-                                candles[index].timestamp
-                            }`,
-                            'magenta'
-                        );
+                        Logger.warning(`Order: ${store.getState().orders[k].id} has been executed at ${candles[index].timestamp}`);
                     }
 
                     // (fake) broadcast executed order
@@ -306,7 +307,7 @@ export class Jesse {
                         ) > store.getState().orders[k].trailingPrice
                     ) {
                         store.getState().orders[k].updatePrice(
-                            store.getState().orders[k].side === 'buy'
+                            store.getState().orders[k].side === Sides.BUY
                             ? store.getState().mainReducer.currentPrice +
                               store.getState().orders[k].trailingPrice
                             : store.getState().mainReducer.currentPrice -
@@ -318,7 +319,7 @@ export class Jesse {
 
             // TODO: don't really do "if", create forming candles instead. Or ask for it? Or test it?
             for (let k = 0; k < config.app.timeFramesToConsider.length; k++) {
-                if (config.app.timeFramesToConsider[k] === '1m') {
+                if (config.app.timeFramesToConsider[k] === supportedTimeFrames.oneMinute) {
                     continue;
                 }
 
@@ -346,8 +347,9 @@ export class Jesse {
                 let executionTime: number = new Date().valueOf() - store.getState().mainReducer.startTime; 
                 if (executionTime < 10000) {
                     console.timeEnd('Executed backtest simulation in'); 
+                    console.log('\n');
                 } else {
-                    console.log(`Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
+                    console.log(`\n Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
                 }
             } 
         }

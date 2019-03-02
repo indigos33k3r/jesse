@@ -31,8 +31,8 @@ const Statistics = {
     },
 
     trades(trades: Trade[]): TableDataInterface[] {
-        const winningTrades: Trade[] = trades.filter(t => t.pnl() > 0);
-        const losingTrades: Trade[] = trades.filter(t => t.pnl() < 0);
+        const winningTrades: Trade[] = trades.filter(t => t.pnl() > 0) ? trades.filter(t => t.pnl() > 0) : [];
+        const losingTrades: Trade[] = trades.filter(t => t.pnl() < 0) ? trades.filter(t => t.pnl() < 0) : [];
         const winRate = winningTrades.length / (losingTrades.length + winningTrades.length);
         const minTradesR: Trade = _.minBy(trades, t => t.R());
         const maxTradedR: Trade = _.maxBy(trades, t => t.R());

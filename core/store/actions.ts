@@ -9,6 +9,7 @@ import store from '../store';
 import { ActionTypes as types } from './types';
 import { ActionInterface } from '../interfaces/ActionInterface';
 import Notifier from '../services/Notifier';
+import Logger from '../services/Logger';
 
 export function resetState(): ActionInterface {
     return {
@@ -75,12 +76,12 @@ export function addCandle(candle: Candle): ActionInterface {
         payload: candle
     }
 }
-// export function quickAddCandle(candle: Candle): ActionInterface {
-//     return {
-//         type: types.QUICK_ADD_CANDLE, 
-//         payload: candle
-//     }
-// }
+export function quickAddCandle(candle: Candle): ActionInterface {
+    return {
+        type: types.QUICK_ADD_CANDLE, 
+        payload: candle
+    }
+}
 export function batchAddCandles(candles: Candle[]): ActionInterface {
     return {
         type: types.BATCH_ADD_CANDLES, 
@@ -150,7 +151,7 @@ export function addOrder(order: Order): ActionInterface {
     }
 
     if ($.isDebuggable('orderSubmission')) {
-        store.dispatch(logWarning(`Created ${order.type} ${order.side} order of ${order.quantity} ${order.symbol.slice(0, 3)} at ${order.price} USD (ID: ${order.id})`));
+        Logger.warning(`Created ${order.type} ${order.side} order of ${order.quantity} ${order.symbol.slice(0, 3)} at ${order.price} USD (ID: ${order.id})`);
     }
 
     return {
