@@ -8,7 +8,6 @@ import currentPosition from '../../core/services/Positions';
 import store, { selectors } from '../../core/store';
 import { Sides, TradeTypes } from '../../core/store/types';
 import HyperParametersInterface from './types';
-import Indicators from '../../core/services/Indicators';
 
 // Initial hyperParameters:
 const defaultHyperParameters: HyperParametersInterface = {
@@ -32,7 +31,7 @@ export default class ScalpingStrategy extends Strategy {
     triggerCandle: Candle;
 
     constructor(hyperParameters: HyperParametersInterface = defaultHyperParameters) {
-        super('Scalping via EMA', '0.0.1', 22);
+        super('Scalping via EMA', '0.0.2', 22);
 
         this.hyperParameters = hyperParameters;
     }
@@ -42,8 +41,8 @@ export default class ScalpingStrategy extends Strategy {
             ? store.getState().mainReducer.currentBalance
             : config.app.positionSize;
 
-        this.EMA8 = Indicators.EMA(8);
-        this.EMA21 = Indicators.EMA(21);
+        this.EMA8 = this.indicators.EMA(8);
+        this.EMA21 = this.indicators.EMA(21);
 
         this.currentCandle = selectors.getCurrentTradingCandle();
     }
@@ -58,6 +57,22 @@ export default class ScalpingStrategy extends Strategy {
         if (this.lookToShort && this.emaTrend() === 'bear' && this.currentCandle.high > this.EMA21) return true;
 
         return false;
+    }
+
+    async executeCancel(): Promise<void> {
+        Logger.warning('Cancel...');
+
+        await this.trader.cancelAllOrders();
+
+        this.stopLossOrder = undefined;
+        this.openPositionOrder = undefined;
+        this.takeProfitOrder = undefined; 
+        this.increasePositionOrder = undefined; 
+        this.reducePositionOrder = undefined; 
+
+        this.lookToLong = false; 
+        this.lookToShort = false; 
+        this.triggerCandle = undefined; 
     }
 
     shouldBuy(): boolean {
@@ -86,10 +101,14 @@ export default class ScalpingStrategy extends Strategy {
 
     shouldWait(): boolean {
         // Don't continue(look for the trigger candle) if we already have an open position.
-        if (currentPosition.isOpen()) return;
+        if (currentPosition.isOpen()) {
+            return true;
+        }
 
-        // return if the previous candle is still valid:
-        if ((this.lookToLong && this.currentCandle.low > this.EMA21) || (this.lookToShort && this.currentCandle.high < this.EMA21)) return;
+        // return true if the previous candle is still valid:
+        if ((this.lookToLong && this.currentCandle.low > this.EMA21) || (this.lookToShort && this.currentCandle.high < this.EMA21)) {
+            return true;
+        }
 
         return false;
     }
@@ -122,7 +141,7 @@ export default class ScalpingStrategy extends Strategy {
                 this.openPositionOrder.quantity
             );
 
-            this.takeProfitOrder = await this.trader.sellAt(this.openPositionOrder.quantity, this.takeProfitPrice);
+            // this.takeProfitOrder = await this.trader.sellAt(this.openPositionOrder.quantity, this.takeProfitPrice);
         } else {
             this.stopLossOrder = await this.trader.stopLossAt(
                 Sides.BUY,
@@ -130,7 +149,7 @@ export default class ScalpingStrategy extends Strategy {
                 this.openPositionOrder.quantity
             );
 
-            this.takeProfitOrder = await this.trader.buyAt(this.openPositionOrder.quantity, this.takeProfitPrice);
+            // this.takeProfitOrder = await this.trader.buyAt(this.openPositionOrder.quantity, this.takeProfitPrice);
         }
 
         this.openPositionOrder = undefined;
@@ -139,17 +158,13 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async onStopLoss() {
-        if ($.isDebugging()) {
-            Logger.warning(`StopLoss has been executed. Cancel orders and keep looking for trigger candle.`);
-        }
+        Logger.warning(`StopLoss has been executed. Cancel orders and keep looking for trigger candle.`);
 
         await this.executeCancel();
     }
 
     async onReducedPosition() {
-        if ($.isDebugging()) {
-            Logger.warning(`Half the position has been exited. Now let's go for the second exit.`);
-        }
+        Logger.warning(`Half the position has been exited. Now let's go for the second exit.`);
 
         this.stopLossPrice = store.getState().mainReducer.entryPrice;
 
@@ -163,7 +178,7 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async executeBuy(): Promise<void> {
-        Logger.warning(`Trigger candle was found. Looking for confirmation...`);
+        Logger.warning(`Trigger candle was found. Submitting LONG orders...`);
 
         this.triggerCandle = this.currentCandle;
 
@@ -219,9 +234,7 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     async executeSell(): Promise<void> {
-        if ($.isDebugging()) {
-            Logger.warning(`Trigger candle was found. Submitting confirmation orders...`);
-        }
+        Logger.warning(`Trigger candle was found. Submitting SHORT orders...`);
 
         this.triggerCandle = this.currentCandle;
 
@@ -231,7 +244,10 @@ export default class ScalpingStrategy extends Strategy {
         }
 
         // for now, don't open a position if the trigger candle itself is acting crazy
-        if (this.triggerCandle.close < lowestPrice) return;
+        if (this.triggerCandle.close < lowestPrice) {
+            Logger.warning(`Trigger candle acting crazy...`);
+            return; 
+        }
 
         this.sellPrice = lowestPrice - 3 * this.pip;
         this.stopLossPrice = this.triggerCandle.high + 3 * this.pip;

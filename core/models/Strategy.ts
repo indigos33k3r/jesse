@@ -9,11 +9,13 @@ import Event from '../services/Event';
 import EventDataInterface from '../interfaces/EventDataInterface';
 import Trader from './Trader';
 import Logger from '../services/Logger';
+import Indicators from '../services/Indicators';
 
 export default abstract class Strategy {
     name: string;
     version: string;
     trader: Trader;
+    indicators: Indicators;
     buyPrice: number;
     sellPrice: number;
     closePrice: number;
@@ -40,32 +42,32 @@ export default abstract class Strategy {
      * @memberof Strategy
      */
     async handleExecutedOrder(data: EventDataInterface) {
-        // in case you're overwriting this method, don't forget to include this line
+        // in case you're overwriting this method, DON'T FORGET to include this line
         if ($.isBackTesting()) {
             this.impactExecutedOrderOnPositionWhenBacktesting(data); 
         }
 
-        if (!_.isUndefined(this.openPositionOrder) && data.order.id === this.openPositionOrder.id) {
+        if ($.isDefined(this.openPositionOrder) && data.order.id === this.openPositionOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.OPEN_POSITION);
             await this.onOpenPosition();
         } 
 
-        else if (!_.isUndefined(this.stopLossOrder) && data.order.id === this.stopLossOrder.id) {
+        else if ($.isDefined(this.stopLossOrder) && data.order.id === this.stopLossOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.CLOSE_POSITION); 
             await this.onStopLoss(); 
         }
 
-        else if (!_.isUndefined(this.takeProfitOrder) && data.order.id === this.takeProfitOrder.id) {
+        else if ($.isDefined(this.takeProfitOrder) && data.order.id === this.takeProfitOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.CLOSE_POSITION); 
             await this.onTakeProfit(); 
         }
         
-        else if (!_.isUndefined(this.increasePositionOrder) && data.order.id === this.increasePositionOrder.id) {
+        else if ($.isDefined(this.increasePositionOrder) && data.order.id === this.increasePositionOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.INCREASE_POSITION); 
             await this.onIncreasedPosition();    
         }
         
-        else if (!_.isUndefined(this.reducePositionOrder) && data.order.id === this.reducePositionOrder.id) {
+        else if ($.isDefined(this.reducePositionOrder) && data.order.id === this.reducePositionOrder.id) {
             this.log(data.time, data.order, tradeLogTypes.REDUCE_POSITION); 
             await this.onReducedPosition(); 
         }
@@ -82,7 +84,7 @@ export default abstract class Strategy {
      * @memberof Strategy
      */
     impactExecutedOrderOnPositionWhenBacktesting(data: EventDataInterface) {
-        if (!_.isUndefined(this.openPositionOrder) && data.order.id === this.openPositionOrder.id) {
+        if ($.isDefined(this.openPositionOrder) && data.order.id === this.openPositionOrder.id) {
             store.dispatch(actions.reduceCurrentBalance(Math.abs(data.order.quantity) * data.order.price));
             store.dispatch(
                 actions.updateEntryPrice(
@@ -97,15 +99,15 @@ export default abstract class Strategy {
             store.dispatch(actions.addQuantity(data.order.quantity));
         } 
 
-        else if (!_.isUndefined(this.stopLossOrder) && data.order.id === this.stopLossOrder.id) {
+        else if ($.isDefined(this.stopLossOrder) && data.order.id === this.stopLossOrder.id) {
             currentPosition.close(data.order.price);
         }
 
-        else if (!_.isUndefined(this.takeProfitOrder) && data.order.id === this.takeProfitOrder.id) {
+        else if ($.isDefined(this.takeProfitOrder) && data.order.id === this.takeProfitOrder.id) {
             currentPosition.close(data.order.price);
         }
 
-        else if (!_.isUndefined(this.increasePositionOrder) && data.order.id === this.increasePositionOrder.id) {
+        else if ($.isDefined(this.increasePositionOrder) && data.order.id === this.increasePositionOrder.id) {
             store.dispatch(actions.reduceCurrentBalance(Math.abs(data.order.quantity) * data.order.price));
             store.dispatch(
                 actions.updateEntryPrice(
@@ -120,7 +122,7 @@ export default abstract class Strategy {
             store.dispatch(actions.addQuantity(data.order.quantity));
         }
 
-        else if (!_.isUndefined(this.reducePositionOrder) && data.order.id === this.reducePositionOrder.id) {
+        else if ($.isDefined(this.reducePositionOrder) && data.order.id === this.reducePositionOrder.id) {
             currentPosition.reduce(data.order.quantity, data.order.price);
         }
     }
@@ -187,6 +189,8 @@ export default abstract class Strategy {
      * @memberof Strategy
      */
     async executeCancel(): Promise<void> {
+        Logger.warning('Cancel...');
+        
         await this.trader.cancelAllOrders();
 
         this.stopLossOrder = undefined;
@@ -204,7 +208,7 @@ export default abstract class Strategy {
     async update() {}
 
     /**
-     * Based on the newly calculated information, check if we should take action or not.
+     * Based on the newly updated info, check if we should take action or not.
      *
      * @abstract
      * @memberof Strategy
@@ -414,6 +418,7 @@ export default abstract class Strategy {
         this.name = name;
         this.version = version;
         this.minimumRequiredCandle = minimumRequiredCandle; 
+        this.indicators = new Indicators(); 
     }
     
     /**
@@ -486,6 +491,7 @@ export default abstract class Strategy {
     log(time: string, order: Order, logType: string) {
         // TODO: if reduce is causing the position to close, 
         // change it to close
+        let storeTemp = store.getState().mainReducer; 
 
         switch (logType) {
             case tradeLogTypes.OPEN_POSITION:
@@ -497,6 +503,7 @@ export default abstract class Strategy {
                 this.trade.symbol = order.symbol;
                 this.trade.type = order.side === Sides.BUY ? TradeTypes.LONG : TradeTypes.SHORT;
                 this.trade.entryPrice = order.price;
+                this.trade.quantity = order.quantity; 
                 this.trade.stopLossPrice = this.stopLossPrice; 
                 this.trade.openedAt = time;
                 break;
@@ -511,9 +518,13 @@ export default abstract class Strategy {
 
             case tradeLogTypes.REDUCE_POSITION:
                 this.trade.orders.push(order);
-                this.trade.exitPrice = $.estimateAveragePrice(
-                    order.quantity, order.price, this.trade.quantity, this.trade.entryPrice
-                );
+                if (! this.trade.exitPrice) {
+                    this.trade.exitPrice = order.price; 
+                } else {
+                    this.trade.exitPrice = $.estimateAveragePrice(
+                        order.quantity, order.price, this.trade.quantity, this.trade.exitPrice
+                    );
+                } 
                 break;
 
             case tradeLogTypes.CLOSE_POSITION:
@@ -522,7 +533,7 @@ export default abstract class Strategy {
                     this.trade.exitPrice = order.price; 
                 } else {
                     this.trade.exitPrice = $.estimateAveragePrice(
-                        order.quantity, order.price, this.trade.quantity, this.trade.entryPrice
+                        order.quantity, order.price, this.trade.quantity, this.trade.exitPrice
                     );
                 } 
                 this.trade.closedAt = time;
@@ -537,8 +548,8 @@ export default abstract class Strategy {
                 break;
 
             default:
-                Logger.error('unsupported tradeLogType');
-                throw new Error('unsupported tradeLogType');
+                Logger.error('Unsupported tradeLogType');
+                throw new Error('Unsupported tradeLogType');
         }
     }
 }
