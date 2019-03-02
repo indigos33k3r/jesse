@@ -76,7 +76,9 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     shouldBuy(): boolean {
-        if (this.emaTrend() !== 'bull' || _.isUndefined(this.openPositionOrder)) return false;
+        if (this.emaTrend() !== 'bull' || $.isDefined(this.openPositionOrder)) {
+            return false;
+        }
 
         if (
             _.round(this.currentCandle.low) <= _.round(this.EMA8) &&
@@ -88,7 +90,9 @@ export default class ScalpingStrategy extends Strategy {
     }
 
     shouldSell(): boolean {
-        if (this.emaTrend() !== 'bear' || $.isDefined(this.openPositionOrder)) return false;
+        if (this.emaTrend() !== 'bear' || $.isDefined(this.openPositionOrder)) {
+            return false;
+        }
 
         if (
             _.round(this.currentCandle.high) >= _.round(this.EMA8) &&
@@ -201,15 +205,11 @@ export default class ScalpingStrategy extends Strategy {
         this.takeProfitPrice = this.buyPrice + this.initialTargetedMargin * 2;
 
         // filter trades that don't worth it
-        if (
-            (this.initialTargetedMargin / this.buyPrice) * 100 <
-            this.hyperParameters.minimumPnlPerTradeFilter
-        ) {
+        if ((this.initialTargetedMargin / this.buyPrice) * 100 < this.hyperParameters.minimumPnlPerTradeFilter) {
             Logger.warning(`Sounds like a crappy trade. Pass!`);
             return;
         }
 
-        if (selectors.countOfActiveOrders() !== 0) await this.executeCancel();
         this.openPositionOrder = await this.trader.startProfitAt(
             Sides.BUY,
             this.buyPrice,
