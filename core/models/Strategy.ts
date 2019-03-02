@@ -491,7 +491,6 @@ export default abstract class Strategy {
     log(time: string, order: Order, logType: string) {
         // TODO: if reduce is causing the position to close, 
         // change it to close
-        let storeTemp = store.getState().mainReducer; 
 
         switch (logType) {
             case tradeLogTypes.OPEN_POSITION:
