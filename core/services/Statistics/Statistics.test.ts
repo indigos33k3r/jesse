@@ -28,6 +28,8 @@ it('Should return proper statistics for given candles[]', () => {
 
 
 it('Should return proper statistics for give trades[]', async () => {
+    store.dispatch(actions.setTradingFee(0.002));
+
     const strategy = new TestStrategy();
     const candles: Candle[] = testingCandles;
 
@@ -49,9 +51,10 @@ it('Should return proper statistics for give trades[]', async () => {
     expect(Statistics.trades(store.getState().trades)).toEqual([
         { key: 'total', value: 2 },
         { key: 'starting balance', value: '$10000' },
-        { key: 'finishing balance', value: '$10004.7' },
-        { key: 'PNL', value: '$4.7' },
-        { key: 'PNL%', value: '0.05%' },
+        { key: 'finishing balance', value: '$9994.29' },
+        { key: 'fee', value: '$10.35' },
+        { key: 'PNL', value: '$-5.7008' },
+        { key: 'PNL%', value: '-0.06%' },
         { key: 'win rate', value: '50%' },
         { key: 'minimum R', value: 1 },
         { key: 'average R', value: 1.5 },

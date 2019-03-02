@@ -2,6 +2,7 @@ import Order from './Order';
 import $ from '../services/Helpers';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+import store from '../store';
 
 /**
  * A trade is made when a position is opened AND closed.
@@ -92,7 +93,8 @@ export default class Trade {
      * @memberof Trade
      */
     pnl(): number {
-        return $.estimateProfit(this.quantity, this.entryPrice, this.exitPrice, this.type);
+        const fee: number = store.getState().config.tradingFee * 2 * this.size(); 
+        return $.estimateProfit(this.quantity, this.entryPrice, this.exitPrice, this.type) - fee;
     }
 
     /**

@@ -37,18 +37,18 @@ const Statistics = {
         const minTradesR: Trade = _.minBy(trades, t => t.R());
         const maxTradedR: Trade = _.maxBy(trades, t => t.R());
         const numberOfLongs = (_.filter(trades, t => t.type === 'long').length / trades.length) * 100;
+        const fee = _.sumBy(trades, 'fee');
+        const pnl: number = _.sumBy(trades, t => t.pnl());
 
         return [
             { key: 'total', value: store.getState().trades.length },
             { key: 'starting balance', value: `$${_.round(store.getState().mainReducer.startingBalance, 2)}` },
             { key: 'finishing balance', value: `$${_.round(store.getState().mainReducer.currentBalance, 2)}` },
-            { key: 'PNL', value: `$${_.round(store.getState().mainReducer.profit, 4)}` },
+            { key: 'fee', value: `$${_.round(fee, 2)}` },
+            { key: 'PNL', value: `$${_.round(pnl, 4)}` },
             {
                 key: 'PNL%',
-                value: `${_.round(
-                    (store.getState().mainReducer.profit / store.getState().mainReducer.startingBalance) * 100,
-                    2
-                )}%`
+                value: `${_.round((pnl / store.getState().mainReducer.startingBalance) * 100, 2)}%`
             },
             { key: 'win rate', value: `${Math.round(winRate * 100)}%` },
             { key: 'minimum R', value: _.round(minTradesR.R(), 2) },

@@ -44,7 +44,9 @@ it('Should return the R(reward/risk ratio)', () => {
     expect(trade.riskRewardRatio()).toEqual(2);
 });
 
-it('Should return the PNL', () => {
+it('Should return the PNL with no fee', () => {
+    store.dispatch(actions.setTradingFee(0));
+
     const trade: Trade = new Trade({
         type: TradeTypes.LONG,
         entryPrice: 10,
@@ -62,7 +64,30 @@ it('Should return the PNL', () => {
     expect(trade.pnl()).toEqual(10);
 });
 
+it('Should return the PNL with fee', () => {
+    // the fee value for Bitfinex 
+    store.dispatch(actions.setTradingFee(0.002));
+
+    const trade: Trade = new Trade({
+        type: TradeTypes.LONG,
+        entryPrice: 10,
+        exitPrice: 20,
+        takeProfitPrice: 20,
+        stopLossPrice: 5,
+        quantity: 1,
+        fee: 0,
+        orders: [],
+        symbol: supportedSymbols.BTCUSD,
+        openedAt: $.now(),
+        closedAt: $.now()
+    });
+    
+    expect(trade.pnl()).toEqual(9.96);
+});
+
 it('Should return the PNL percentage', () => {
+    store.dispatch(actions.setTradingFee(0));
+    
     const trade: Trade = new Trade({
         type: TradeTypes.LONG,
         entryPrice: 10,
