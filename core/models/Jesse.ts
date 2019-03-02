@@ -349,7 +349,7 @@ export class Jesse {
                     console.timeEnd('Executed backtest simulation in'); 
                     console.log('\n');
                 } else {
-                    console.log(`\n Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
+                    console.log(`Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
                 }
             } 
         }
