@@ -2,9 +2,7 @@ import Strategy from '../../core/models/Strategy';
 import store from '../../core/store';
 
 /**
- * A strategy written to be used at 'backtest.test.ts'.
- * If you're looking for an example strategy to 
- * copy from, check out 'ExampleStrategy.ts'.
+ * A strategy written as an example. 
  *
  * @export
  * @class ExampleStrategy
