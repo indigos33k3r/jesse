@@ -110,7 +110,7 @@ const currentPosition = {
      * @param closePrice number
      */
     close(closePrice: number = store.getState().mainReducer.currentPrice): void {
-        if (!this.isOpen()) {
+        if (! this.isOpen()) {
             throw new EmptyPosition(`The position is already closed.`);
         }
 
@@ -125,7 +125,7 @@ const currentPosition = {
         );
 
         store.dispatch(actions.addProfit(estimatedProfit));
-        store.dispatch(actions.increaseCurrentBalance(closeQuantity * store.getState().mainReducer.entryPrice + estimatedProfit));
+        store.dispatch(actions.increaseCurrentBalance((closeQuantity * store.getState().mainReducer.entryPrice) + estimatedProfit));
         store.dispatch(actions.updateQuantity(0));
     },
 
