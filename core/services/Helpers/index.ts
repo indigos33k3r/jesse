@@ -6,7 +6,7 @@ import mkdirp from 'mkdirp';
 import moment, { Moment } from 'moment-timezone';
 import config from '../../../config';
 import Candle from '../../models/Candle';
-import { Sides, TradeTypes } from '../../store/types';
+import { Sides, TradeTypes, supportedSymbols } from '../../store/types';
 moment.tz.setDefault('UTC');
 
 const $ = {
@@ -302,20 +302,20 @@ const $ = {
      */
     estimatePip(symbol: string): number {
         switch (symbol) {
-            case 'BTCUSD':
+            case supportedSymbols.BTCUSD:
                 return 0.5;
 
-            case 'EOSUSD':
+            case supportedSymbols.EOSUSD:
                 return 0.0000001;
 
-            case 'XRPUSD':
+            case supportedSymbols.XRPUSD:
                 return 0.00000004;
 
-            case 'ETHUSD':
+            case supportedSymbols.ETHUSD:
                 return 0.000025;
 
             default:
-                return 0;
+                throw new Error(`A pip value is not available for ${symbol}`);
         }
     },
 
