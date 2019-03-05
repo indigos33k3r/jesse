@@ -13,7 +13,7 @@ interface EMA {
 
 class Indicators {
     // because we can have more than one EMA
-    lastEMAs: EMA[] = [];
+    protected lastEMAs: EMA[] = [];
 
     EMA(
         period: number,
