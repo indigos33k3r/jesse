@@ -27,7 +27,43 @@ it('Should return proper statistics for given candles[]', () => {
 });
 
 
-it('Should return proper statistics for give trades[]', async () => {
+it('Should return proper statistics for give trades[] WITHOUT fee', async () => {
+    store.dispatch(actions.setTradingFee(0));
+
+    const strategy = new TestStrategy();
+    const candles: Candle[] = testingCandles;
+
+    // perform a quick backtest so that can have some trades do the assertions
+    await new Jesse(strategy).backTest({
+        symbols: [
+            {
+                symbol: candles[0].symbol,
+                timeFrames: [
+                    {
+                        timeFrame: candles[0].timeFrame,
+                        candles
+                    }
+                ]
+            }
+        ]
+    });
+
+    expect(Statistics.trades(store.getState().trades)).toEqual([
+        { key: 'total', value: 2 },
+        { key: 'starting balance', value: '$10000' },
+        { key: 'finishing balance', value: '$10004.7' },
+        { key: "fee", value: "$0" },
+        { key: 'PNL', value: '$4.7' },
+        { key: 'PNL%', value: '0.05%' },
+        { key: 'win rate', value: '50%' },
+        { key: 'minimum R', value: 1 },
+        { key: 'average R', value: 1.5 },
+        { key: 'maximum R', value: 2 },
+        { key: 'longs/shorts trades', value: '50%/50%' }
+    ]);
+});
+
+it('Should return proper statistics for give trades[] WITH fee', async () => {
     store.dispatch(actions.setTradingFee(0.002));
 
     const strategy = new TestStrategy();
