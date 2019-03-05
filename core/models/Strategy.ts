@@ -32,6 +32,21 @@ export default abstract class Strategy {
     takeProfitOrder: Order; 
     increasePositionOrder: Order; 
     reducePositionOrder: Order; 
+
+    /**
+     * Creates an instance of Strategy.
+     * 
+     * @param {string} name
+     * @param {string} version
+     * @param {number} minimumRequiredCandle
+     * @memberof Strategy
+     */
+    constructor(name: string, version: string, minimumRequiredCandle: number = 0) {
+        this.name = name;
+        this.version = version;
+        this.minimumRequiredCandle = minimumRequiredCandle; 
+        this.indicators = new Indicators(); 
+    }
     
     /**
      * to handle executed orders. If you need more types of 
@@ -405,21 +420,6 @@ export default abstract class Strategy {
      * @memberof Strategy
      */
     async onReducedPosition() {}
-
-    /**
-     * Creates an instance of Strategy.
-     * 
-     * @param {string} name
-     * @param {string} version
-     * @param {number} minimumRequiredCandle
-     * @memberof Strategy
-     */
-    constructor(name: string, version: string, minimumRequiredCandle: number = 0) {
-        this.name = name;
-        this.version = version;
-        this.minimumRequiredCandle = minimumRequiredCandle; 
-        this.indicators = new Indicators(); 
-    }
     
     /**
      * Initially prepare the strategy. 
