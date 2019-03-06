@@ -1,17 +1,17 @@
 import crypto from 'crypto';
 import _ from 'lodash';
 import WebSocket from 'ws';
-import { BitfinexError, BitfinexOrder, BitfinexPosition, CandlesChannel, orderTypes } from './types';
 import config from '../../../config';
-import $ from '../../services/Helpers';
-import store, { actions, selectors } from '../../store';
-import Order from '../../models/Order';
-import { orderStatuses, Sides, orderFlags } from '../../store/types';
-import currentPosition from '../../services/Positions';
 import Candle from '../../models/Candle';
-import Exchange from '../Exchange';
-import { getOrderFlags, getError, transformPositionData } from './utilities';
+import Order from '../../models/Order';
+import $ from '../../services/Helpers';
 import Logger from '../../services/Logger';
+import currentPosition from '../../services/Positions';
+import store, { actions, selectors } from '../../store';
+import { orderStatuses, Sides } from '../../store/types';
+import Exchange from '../Exchange';
+import { BitfinexError, BitfinexOrder, BitfinexPosition, CandlesChannel, orderTypes } from './types';
+import { getError, getOrderFlags, transformPositionData } from './utilities';
 
 /**
  * To connect to Bitfinex's market via WS connection. Currently supports margin trading only.
