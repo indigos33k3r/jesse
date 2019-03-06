@@ -245,6 +245,11 @@ export default abstract class Strategy {
             return;
         }
 
+        // validation 
+        if (this.shouldSell() && this.shouldBuy()) {
+            $.hardError('shouldSell() and shouldBuy() should not be true at the same time.'); 
+        }
+
         if (this.shouldBuy()) {
             await this.executeBuy(); 
         }
