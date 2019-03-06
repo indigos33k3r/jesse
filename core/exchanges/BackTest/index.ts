@@ -40,13 +40,6 @@ export default class BackTest extends Exchange {
         return new Promise<Order>(resolve => {
             store.dispatch(actions.addOrder(order));
 
-            $.printToConsole(
-                `Executed a ${order.side} ${order.type} order at the price of ${order.price} for the quantity of ${
-                    order.quantity
-                }`,
-                'green'
-            );
-
             resolve(order);
         });
     }
