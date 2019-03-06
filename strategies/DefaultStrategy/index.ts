@@ -26,11 +26,11 @@ export default class DefaultStrategy extends Strategy {
     riskPerCapitalPercentage: number = 1; 
 
     constructor() {
-        super('EMA strategy', '0.0.1', 26);
+        super('EMA strategy', '0.0.1', 21);
     }
 
     async update() {
-        this.shortEMA = this.indicators.EMA(9);
+        this.shortEMA = this.indicators.EMA(8);
         this.longEMA = this.indicators.EMA(21);
 
         this.currentCandle = selectors.getCurrentTradingCandle();
@@ -80,7 +80,6 @@ export default class DefaultStrategy extends Strategy {
             this.riskPerQty,
             this.buyPrice
         );
-        positionSize = store.getState().mainReducer.currentBalance; 
         this.positionQuantity = $.positionSizeToQuantity(positionSize, this.buyPrice);
         this.openPositionOrder = await this.trader.startProfitAt(Sides.BUY, this.buyPrice, this.positionQuantity);
     }
@@ -96,7 +95,6 @@ export default class DefaultStrategy extends Strategy {
             this.riskPerQty,
             this.sellPrice
         );
-        positionSize = store.getState().mainReducer.currentBalance; 
         this.positionQuantity = $.positionSizeToQuantity(positionSize, this.sellPrice);
         this.openPositionOrder = await this.trader.startProfitAt(Sides.SELL, this.sellPrice, this.positionQuantity);
     }
