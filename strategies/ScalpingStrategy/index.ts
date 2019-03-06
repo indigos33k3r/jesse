@@ -217,17 +217,15 @@ export default class ScalpingStrategy extends Strategy {
         );
 
         // exit point 1
-        this.reducePositionOrder = await this.trader.reducePositionAt(
-            Sides.SELL,
-            this.reducePositionPrice,
-            (this.openPositionOrder.quantity * this.hyperParameters.takeProfitRate) / 10
+        this.reducePositionOrder = await this.trader.sellAt(
+            (this.openPositionOrder.quantity * this.hyperParameters.takeProfitRate) / 10, 
+            this.reducePositionPrice
         );
         // exit point 2
-        this.takeProfitOrder = await this.trader.reducePositionAt(
-            Sides.SELL,
-            this.takeProfitPrice,
+        this.takeProfitOrder = await this.trader.sellAt(
             Math.abs(this.openPositionOrder.quantity) -
-                (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10
+                (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10, 
+            this.takeProfitPrice
         );
 
         this.lookToLong = true;
@@ -269,17 +267,15 @@ export default class ScalpingStrategy extends Strategy {
         );
 
         // exit point 1
-        this.reducePositionOrder = await this.trader.reducePositionAt(
-            Sides.BUY,
+        this.reducePositionOrder = await this.trader.buyAt(
+            (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10, 
             this.reducePositionPrice,
-            (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10
         );
         // exit point 2
-        this.takeProfitOrder = await this.trader.reducePositionAt(
-            Sides.BUY,
-            this.takeProfitPrice,
+        this.takeProfitOrder = await this.trader.buyAt(
             Math.abs(this.openPositionOrder.quantity) -
-                (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10
+                (Math.abs(this.openPositionOrder.quantity) * this.hyperParameters.takeProfitRate) / 10, 
+            this.takeProfitPrice
         );
 
         this.lookToShort = true;
