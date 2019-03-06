@@ -67,7 +67,7 @@ it('Should go long', async () => {
 });
 
 it('Should reduce the size of Position when reaching a certain price', async () => {
-    await expect(trader.reducePositionAt('short', store.getState().mainReducer.currentPrice + 10, -(store.getState().mainReducer.currentPrice + 10)))
+    await expect(trader.reducePositionAt(-(store.getState().mainReducer.currentPrice + 10), store.getState().mainReducer.currentPrice + 10, 'short'))
         .rejects
         .toThrow(`Invalid "side"`);
 
@@ -75,7 +75,7 @@ it('Should reduce the size of Position when reaching a certain price', async () 
     expect(store.getState().mainReducer.quantity).toBe(2);
     expect(store.getState().mainReducer.currentBalance).toBe(900);
 
-    const order: Order = await trader.reducePositionAt(Sides.SELL, store.getState().mainReducer.currentPrice + 10, 1);
+    const order: Order = await trader.reducePositionAt(1, store.getState().mainReducer.currentPrice + 10, Sides.SELL);
 
     expect(order.type).toBe(orderTypes.LIMIT);
     expect(order.isNew()).toBeTruthy();

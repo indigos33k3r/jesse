@@ -3,7 +3,7 @@ import Order from "../models/Order";
 import Trader from "../models/Trader";
 import Candle from "../models/Candle";
 import config from "../../config";
-import { supportedSymbols, supportedTimeFrames } from "../store/types";
+import { supportedSymbols, supportedTimeFrames, Sides } from "../store/types";
 import $ from "../services/Helpers";
 const trader: Trader = new Trader();
 
@@ -28,8 +28,8 @@ it('Should return the count of active orders', async () => {
     await trader.buyAtMarket(1);
     await trader.buyAtMarket(1);
     // active orders 
-    await trader.reducePositionAt('sell', store.getState().mainReducer.currentPrice + 10, 1);
-    await trader.reducePositionAt('sell', store.getState().mainReducer.currentPrice + 15, 0.5);
+    await trader.reducePositionAt(1, store.getState().mainReducer.currentPrice + 10, Sides.SELL);
+    await trader.reducePositionAt(0.5, store.getState().mainReducer.currentPrice + 15, Sides.SELL);
 
     expect(selectors.countOfActiveOrders()).toBe(2);
 }); 
