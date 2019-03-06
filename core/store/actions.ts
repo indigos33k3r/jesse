@@ -150,9 +150,7 @@ export function addOrder(order: Order): ActionInterface {
         Notifier.send(`Created ${order.type} ${order.side} order of ${_.round(order.quantity, 2)} ${order.symbol.slice(0, 3)} at ${_.round(order.price, 2)} USD (ID: ${order.id})`);
     }
 
-    if ($.isDebuggable('orderSubmission')) {
-        Logger.warning(`Created ${order.type} ${order.side} order of ${order.quantity} ${order.symbol.slice(0, 3)} at ${order.price} USD (ID: ${order.id})`);
-    }
+    Logger.warning(`Created ${order.type} ${order.side} order of ${order.quantity} ${order.symbol.slice(0, 3)} at ${order.price} USD (ID: ${order.id})`);
 
     return {
         type: types.ADD_ORDER,
