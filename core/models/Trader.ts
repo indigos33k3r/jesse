@@ -69,13 +69,13 @@ export default class Trader {
     /**
      * Reduces the size of the position through a LIMIT order.
      *
-     * @param {string} side
-     * @param {number} price
      * @param {number} quantity
+     * @param {number} price
+     * @param {string} side
      * @returns {Promise<Order>}
      * @memberof Trader
      */
-    async reducePositionAt(side: string, price: number, quantity: number): Promise<Order> {
+    async reducePositionAt(quantity: number, price: number, side: string): Promise<Order> {
         $.validateSide(side);
         return await api.limitOrder(store.getState().config.tradingSymbol, Math.abs(quantity), price, side, [orderFlags.REDUCE_ONLY]);
     }
