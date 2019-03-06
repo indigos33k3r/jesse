@@ -233,6 +233,8 @@ export class Jesse {
                     return 60;
                 case supportedTimeFrames.threeHours:
                     return 60 * 3;
+                case supportedTimeFrames.sixHours:
+                    return 60 * 6;
                 case supportedTimeFrames.oneDay:
                     return 60 * 24;
 
