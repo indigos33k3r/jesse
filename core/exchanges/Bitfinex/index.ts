@@ -6,11 +6,12 @@ import config from '../../../config';
 import $ from '../../services/Helpers';
 import store, { actions, selectors } from '../../store';
 import Order from '../../models/Order';
-import { orderStatuses, Sides } from '../../store/types';
+import { orderStatuses, Sides, orderFlags } from '../../store/types';
 import currentPosition from '../../services/Positions';
 import Candle from '../../models/Candle';
 import Exchange from '../Exchange';
 import { getOrderFlags, getError, transformPositionData } from './utilities';
+import Logger from '../../services/Logger';
 
 /**
  * To connect to Bitfinex's market via WS connection. Currently supports margin trading only.
@@ -395,7 +396,7 @@ export default class Bitfinex extends Exchange {
     private async submitOrder(order: BitfinexOrder) {
         // validations
         if (!this.isAuthenticated) {
-            store.dispatch(actions.logError('not authenticated'));
+            Logger.error('not authenticated');
             return Promise.reject(new Error('not authenticated'));
         }
         $.validateSymbol(order.symbol);
@@ -421,6 +422,7 @@ export default class Bitfinex extends Exchange {
                         // fail
                         else if (data[2][data[2].length - 2] === 'ERROR') {
                             this.isSubmittingOrders = false;
+                            Logger.error(message);
                             reject(message);
                         }
                     }
