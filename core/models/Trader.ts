@@ -1,7 +1,6 @@
 import store from '../store';
 import $ from '../services/Helpers';
 import Order from '../models/Order';
-import currentPosition from '../services/Positions';
 import { Sides, orderFlags } from '../store/types';
 import api from '../services/API';
 import jesse from './Jesse';
