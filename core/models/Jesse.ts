@@ -30,6 +30,7 @@ const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
  */
 export class Jesse {
     strategy: Strategy;
+    executedOrdersToImpact: Order[] = []; 
     
     /**
      * Creates an instance of Jesse.
@@ -109,6 +110,28 @@ export class Jesse {
         store.dispatch(actions.updateCurrentPrice(mostRecentCandle.close));
 
         await this.strategy.execute();
+
+        let that = this; 
+
+        if (this.executedOrdersToImpact.length) {
+            this.executedOrdersToImpact.forEach(async function (order) {
+                // (fake) broadcast executed order
+                try {
+                    await that.strategy.handleExecutedOrder({
+                        time: mostRecentCandle.timestamp,
+                        order
+                    });
+                } catch (error) {
+                    if (error instanceof EmptyPosition) {
+                        await that.strategy.executeCancel(); 
+                    } else {
+                        throw error;
+                    }
+                }
+            }); 
+
+            this.executedOrdersToImpact = [];
+        }
     }
 
     /**

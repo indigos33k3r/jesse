@@ -20,19 +20,7 @@ export default class Trader {
         let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.SELL, []);
 
         if (! $.isLiveTrading()) {
-            // (fake) broadcast executed order
-            try {
-                await jesse.strategy.handleExecutedOrder({
-                    time: order.createdAt,
-                    order
-                });
-            } catch (error) {
-                if (error instanceof EmptyPosition) {
-                    await jesse.strategy.executeCancel(); 
-                } else {
-                    throw error;
-                }
-            }
+            jesse.executedOrdersToImpact.push(order);
         }
 
         return order; 
@@ -61,19 +49,7 @@ export default class Trader {
         let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.BUY, []);
 
         if (! $.isLiveTrading()) {
-            // (fake) broadcast executed order
-            try {
-                await jesse.strategy.handleExecutedOrder({
-                    time: order.createdAt,
-                    order
-                });
-            } catch (error) {
-                if (error instanceof EmptyPosition) {
-                    await jesse.strategy.executeCancel(); 
-                } else {
-                    throw error;
-                }
-            }
+            jesse.executedOrdersToImpact.push(order);
         }
 
         return order;
