@@ -200,7 +200,7 @@ const $ = {
             return Math.abs(quantity);
         }
 
-        throw new Error(`side is not supported.`);
+        $.hardError(`side is not supported.`);
     },
 
     /**
@@ -315,7 +315,7 @@ const $ = {
                 return 0.000025;
 
             default:
-                throw new Error(`A pip value is not available for ${symbol}`);
+                $.hardError(`A pip value is not available for "${symbol}"`);
         }
     },
 
@@ -420,7 +420,7 @@ const $ = {
      */
     validateSide(side: string): void {
         if (!_.includes(['buy', 'sell'], side)) {
-            throw new Error(`Invalid "side". Must be either "sell" or "buy".`);
+            $.hardError(`Invalid side: "${side}". Must be either "sell" or "buy".`);
         }
     },
 
@@ -449,7 +449,7 @@ const $ = {
                 symbol
             )
         ) {
-            throw new Error(`Invalid "symbol format". Example of accepted values are: "BTCUSD", "ETHUSD"`);
+            $.hardError(`Invalid symbol: "${symbol}". Example of accepted values are: "BTCUSD", "ETHUSD"`);
         }
     },
 
@@ -460,8 +460,8 @@ const $ = {
      */
     validateTimeFrame(timeFrame: string): void {
         if (!_.includes(['1m', '5m', '15m', '30m', '1h', '3h', '6h', '1d'], timeFrame)) {
-            throw new Error(
-                `Invalid "timeFrame format". Example of accepted values are: '1m', '5m', '15m', '30m', '1h', '3h', '6h', '1d'.`
+            $.hardError(
+                `Invalid timeFrame: "${timeFrame}". Example of accepted values are: '1m', '5m', '15m', '30m', '1h', '3h', '6h', '1d'.`
             );
         }
     },
@@ -505,7 +505,7 @@ const $ = {
                 return TradeTypes.SHORT;
 
             default:
-                throw new Error('unsupported side');
+                $.hardError(`unsupported side: "${side}"`);
         }
     },
 
@@ -517,7 +517,7 @@ const $ = {
                 return Sides.SELL;
 
             default:
-                throw new Error('unsupported type');
+                $.hardError(`unsupported type: "${type}"`);
         }
     }, 
 
