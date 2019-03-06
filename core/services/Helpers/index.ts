@@ -519,6 +519,12 @@ const $ = {
             default:
                 throw new Error('unsupported type');
         }
+    }, 
+
+    riskToSize(capital: number, riskPerCapital: number, riskPerQty: number, entryPrice: number): number {
+        riskPerCapital /= 100;
+        const suggestedValue: number = ((riskPerCapital * capital) / riskPerQty) * entryPrice; 
+        return Math.min(suggestedValue, capital);
     }
 };
 

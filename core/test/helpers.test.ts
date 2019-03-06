@@ -40,3 +40,11 @@ it('Should convert positionType to side', () => {
     expect($.typeToSide(TradeTypes.LONG)).toBe(Sides.BUY);
     expect($.typeToSide(TradeTypes.SHORT)).toBe(Sides.SELL);
 });
+
+it('Should should return position size based on risk', () => {
+    expect(
+        Math.round(
+            $.riskToSize(10000, 1, 0.70, 8.60)
+        )
+    ).toEqual(1229);
+});
