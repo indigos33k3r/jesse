@@ -357,9 +357,7 @@ export default abstract class Strategy {
      * @memberof Strategy
      */
     async onOpenPosition() {
-        if ($.isDebugging()) {
-            Logger.warning(`Detected open position. Setting stops now:`);
-        }
+        Logger.warning(`Detected open position. Setting stops now:`);
 
         if (currentPosition.type() === TradeTypes.LONG) {
             this.stopLossOrder = await this.trader.stopLossAt(
