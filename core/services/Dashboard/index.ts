@@ -5,7 +5,7 @@ import store, { selectors } from '../../store';
 import currentPosition from '../Positions';
 import Table from '../Table';
 import Report from '../Report';
-import jesse from '../../models/Jesse';
+import bootstrap from '../Bootstrap';
 import { ErrorInterface, WarningInterface } from '../../interfaces/LogInterfaces';
 import chalk from 'chalk';
 import Candle from '../../models/Candle';
@@ -16,7 +16,7 @@ const Dashboard = {
         console.clear();
 
         if (config.dashboard.items.info) {
-            Table.keyValue(Report.liveTrade(jesse.strategy), `JESSE (v${require('../../../package.json').version})`);
+            Table.keyValue(Report.liveTrade(bootstrap.strategy), `JESSE (v${require('../../../package.json').version})`);
         }
 
         if (config.dashboard.items.errors && store.getState().logs.errors.length) {

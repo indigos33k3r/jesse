@@ -4,7 +4,7 @@ require('dotenv').config();
 import _ from 'lodash';
 import readline from 'readline';
 import config from './config';
-import jesse from './core/models/Jesse';
+import bootstrap from './core/services/Bootstrap';
 import candleSet from './core/services/CandleLoader';
 import Notifier from './core/services/Notifier';
 import store, { actions } from './core/store';
@@ -17,9 +17,9 @@ let executeExit = _.once(function() {
 
     store.dispatch(actions.logWarning('Saving before exit...'));
 
-    jesse.strategy.end();
+    bootstrap.strategy.end();
 
-    jesse.saveLogs().then(() => {
+    bootstrap.saveLogs().then(() => {
         process.exit();
     });
 });
@@ -33,11 +33,11 @@ if (config.sentry.enable) {
 // run the main application
 switch (config.app.tradingMode.toLowerCase()) {
     case 'backtest':
-        jesse.backTest(candleSet);
+        bootstrap.backTest(candleSet);
         break;
 
     case 'fitness':
-        jesse.fitness(candleSet);
+        bootstrap.fitness(candleSet);
         break;
 
     case 'livetrade':
@@ -71,7 +71,7 @@ switch (config.app.tradingMode.toLowerCase()) {
             Dashboard.liveTrade();
         });
 
-        jesse.liveTrade();
+        bootstrap.liveTrade();
         break;
 
     default:

@@ -4,7 +4,7 @@ import TestStrategy from './data/TestStrategy';
 import store, { actions } from '../store';
 import { supportedSymbols, TradeTypes, Sides, orderStatuses } from '../store/types';
 import Candle from '../models/Candle';
-import { Jesse } from '../models/Jesse';
+import { Bootstrap } from '../services/Bootstrap';
 import Order from '../models/Order';
 import Trade from '../models/Trade';
 import config from '../../config';
@@ -21,8 +21,8 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
     const strategy = new TestStrategy();
     const candles: Candle[] = testingCandles;
 
-    // run backTest on a new instance of Jesse
-    await new Jesse(new TestStrategy()).backTest({
+    // run backTest on a new instance of Bootstrap
+    await new Bootstrap(new TestStrategy()).backTest({
         symbols: [
             {
                 symbol: candles[0].symbol,
@@ -138,7 +138,7 @@ it('Should log a warning for not having enough candles to execute the strategy',
     const strategy = new TestStrategy(3);
     const candles: Candle[] = testingCandles;
     
-    await new Jesse(strategy).backTest({
+    await new Bootstrap(strategy).backTest({
         symbols: [
             {
                 symbol: candles[0].symbol,

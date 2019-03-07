@@ -4,7 +4,7 @@ import { supportedSymbols, supportedTimeFrames } from '../../store/types';
 import testingCandles from '../../test/data/candles';
 import Candle from '../../models/Candle';
 import TestStrategy from '../../test/data/TestStrategy';
-import { Jesse } from '../../models/Jesse';
+import { Bootstrap } from '../Bootstrap';
 import Statistics from '.';
 
 beforeEach(() => {
@@ -34,7 +34,7 @@ it('Should return proper statistics for give trades[] WITHOUT fee', async () => 
     const candles: Candle[] = testingCandles;
 
     // perform a quick backtest so that can have some trades do the assertions
-    await new Jesse(strategy).backTest({
+    await new Bootstrap(strategy).backTest({
         symbols: [
             {
                 symbol: candles[0].symbol,
@@ -70,7 +70,7 @@ it('Should return proper statistics for give trades[] WITH fee', async () => {
     const candles: Candle[] = testingCandles;
 
     // perform a quick backtest so that can have some trades do the assertions
-    await new Jesse(strategy).backTest({
+    await new Bootstrap(strategy).backTest({
         symbols: [
             {
                 symbol: candles[0].symbol,

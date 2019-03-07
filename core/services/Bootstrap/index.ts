@@ -1,41 +1,41 @@
 import _cliProgress from 'cli-progress';
 import jsonfile from 'jsonfile';
 import _ from 'lodash';
-import config from '../../config';
-import Router from '../../strategies/Router';
-import ConflictingOrders from '../exceptions/ConflictingOrders';
-import EmptyPosition from '../exceptions/EmptyPosition';
-import { ActionInterface } from '../interfaces/ActionInterface';
-import { CandleSetInterface } from '../interfaces/CandleSetInterface';
-import Candle from '../models/Candle';
-import Dashboard from '../services/Dashboard';
-import $ from '../services/Helpers';
-import Notifier from '../services/Notifier';
-import Report from '../services/Report';
-import Statistics from '../services/Statistics';
-import Table from '../services/Table';
-import store, { actions } from '../store';
-import { reduxActionLogs } from '../store/reducers/mainReducer';
-import { ActionTypes, supportedTimeFrames, Sides } from '../store/types';
-import Order from './Order';
-import Strategy from '../strategies/Strategy';
-import Logger from '../services/Logger';
+import config from '../../../config';
+import Router from '../../../strategies/Router';
+import ConflictingOrders from '../../exceptions/ConflictingOrders';
+import EmptyPosition from '../../exceptions/EmptyPosition';
+import { ActionInterface } from '../../interfaces/ActionInterface';
+import { CandleSetInterface } from '../../interfaces/CandleSetInterface';
+import Candle from '../../models/Candle';
+import Dashboard from '../Dashboard';
+import $ from '../Helpers';
+import Notifier from '../Notifier';
+import Report from '../Report';
+import Statistics from '../Statistics';
+import Table from '../Table';
+import store, { actions } from '../../store';
+import { reduxActionLogs } from '../../store/reducers/mainReducer';
+import { ActionTypes, supportedTimeFrames, Sides } from '../../store/types';
+import Order from '../../models/Order';
+import Strategy from '../../strategies/Strategy';
+import Logger from '../Logger';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
 
 /**
- * This class does basically everything that Jesse Livermore would have wished he could do.
+ * This class does basically everything that Bootstrap Livermore would have wished he could do.
  *
  * @export
- * @class Jesse
+ * @class Bootstrap
  */
-export class Jesse {
+export class Bootstrap {
     strategy: Strategy;
     
     /**
-     * Creates an instance of Jesse.
+     * Creates an instance of Bootstrap.
      *
      * @param {Strategy} [strategy]
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     constructor(strategy?: Strategy) {
         if (strategy) {
@@ -54,7 +54,7 @@ export class Jesse {
      * Trades with live data on exchange. At this point, you'll either make a lot, or lose a lot.
      *
      * @returns real money ($ $)
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async liveTrade() {
         Dashboard.liveTrade();
@@ -78,7 +78,7 @@ export class Jesse {
      * subscribe to the store, to detect new candle's which is when we execute the strategy.
      * There's also logging stuff which we do by watching the store.
      *
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async watchStoreForExecution() {
         await this.strategy.init();
@@ -97,7 +97,7 @@ export class Jesse {
      * Pulls the trigger and executes our trading strategy.
      *
      * @param {Candle} mostRecentCandle
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async executeStrategy(mostRecentCandle: Candle) {
         if (
@@ -137,12 +137,12 @@ export class Jesse {
      * Runs the strategy on historical candles, to see how the strategy would have performed in that past.
      *
      * @param {CandleSetInterface} candleSet
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async backTest(candleSet: CandleSetInterface) {
         console.clear(); 
 
-        Table.keyValue(Report.backTest(this.strategy), `JESSE (v${require('../../package.json').version})`);
+        Table.keyValue(Report.backTest(this.strategy), `JESSE (v${require('../../../package.json').version})`);
 
         await this.strategy.init();
 
@@ -176,7 +176,7 @@ export class Jesse {
      *
      * @param {CandleSetInterface} candleSet
      * @returns {Promise<number>}
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async fitness(candleSet: CandleSetInterface): Promise<number> {
         await this.strategy.init();
@@ -205,7 +205,7 @@ export class Jesse {
      *
      * @param {string} candleSize
      * @returns {number}
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     getOneMinuteCandleCount(candleSize: string): number {
         switch (candleSize) {
@@ -229,7 +229,7 @@ export class Jesse {
      *
      * @param {Candle[]} candles
      * @param {Candle[]} oneMinuteCandles
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     async runBackTest(candles: Candle[]) {
         console.time('Executed backtest simulation in');
@@ -282,7 +282,7 @@ export class Jesse {
                 $.printCandle(candles[index], true);
             }
 
-            // validate for conflicting orders. Without this, there may be few conflicting orders causing Jesse to break.
+            // validate for conflicting orders. Without this, there may be few conflicting orders causing Bootstrap to break.
             try {
                 this.validateOrders(candles[index]);
             } catch (error) {
@@ -383,7 +383,7 @@ export class Jesse {
      * Validates orders.
      *
      * @param {Candle} candle
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     validateOrders(candle: Candle) {
         if (
@@ -410,7 +410,7 @@ export class Jesse {
      * Saves loges.
      *
      * @returns {void}
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     saveLogs() {
         return new Promise((resolve, reject) => {
@@ -471,12 +471,12 @@ export class Jesse {
      * @param {Candle} candle
      * @param {Order} order
      * @returns {boolean}
-     * @memberof Jesse
+     * @memberof Bootstrap
      */
     doesCandleIncludeOrderPrice(candle: Candle, order: Order): boolean {
         return order.price >= candle.low && order.price <= candle.high;
     }
 }
 
-const jesse: Jesse = new Jesse();
-export default jesse;
+const bootstrap: Bootstrap = new Bootstrap();
+export default bootstrap;
