@@ -366,7 +366,6 @@ export class Jesse {
 
         // end progress-bar
         if ($.isBackTesting() && config.logging.items.progressBar) {
-            this.strategy.end(); 
             progressBar.update(candles.length);
             progressBar.stop();
             if (! $.isTesting()) {
