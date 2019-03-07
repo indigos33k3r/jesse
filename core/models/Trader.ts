@@ -1,10 +1,9 @@
-import store from '../store';
-import $ from '../services/Helpers';
 import Order from '../models/Order';
-import { Sides, orderFlags } from '../store/types';
 import api from '../services/API';
+import $ from '../services/Helpers';
+import store from '../store';
+import { orderFlags, Sides } from '../store/types';
 import jesse from './Jesse';
-import EmptyPosition from '../exceptions/EmptyPosition';
 
 export default class Trader {
     /**
