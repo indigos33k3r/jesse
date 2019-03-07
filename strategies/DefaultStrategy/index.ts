@@ -1,4 +1,4 @@
-import Strategy from '../../core/models/Strategy';
+import Strategy from '../../core/strategies/Strategy';
 import Candle from '../../core/models/Candle';
 import store, { selectors } from '../../core/store';
 import { Sides } from '../../core/store/types';

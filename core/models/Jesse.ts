@@ -18,7 +18,7 @@ import store, { actions } from '../store';
 import { reduxActionLogs } from '../store/reducers/mainReducer';
 import { ActionTypes, supportedTimeFrames, Sides } from '../store/types';
 import Order from './Order';
-import Strategy from './Strategy';
+import Strategy from '../strategies/Strategy';
 import Logger from '../services/Logger';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
 

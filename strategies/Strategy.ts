@@ -1,15 +1,15 @@
-import $ from '../services/Helpers';
-import currentPosition from '../services/Positions';
-import store, { actions, selectors } from '../store';
-import { Sides, tradeLogTypes, TradeTypes } from '../store/types';
-import Order from './Order';
-import Trade from './Trade';
+import $ from '../core/services/Helpers';
+import currentPosition from '../core/services/Positions';
+import store, { actions, selectors } from '../core/store';
+import { Sides, tradeLogTypes, TradeTypes } from '../core/store/types';
+import Order from '../core/models/Order';
+import Trade from '../core/models/Trade';
 import _ from 'lodash';
-import Event from '../services/Event';
-import EventDataInterface from '../interfaces/EventDataInterface';
-import Trader from './Trader';
-import Logger from '../services/Logger';
-import Indicators from '../services/Indicators';
+import Event from '../core/services/Event';
+import EventDataInterface from '../core/interfaces/EventDataInterface';
+import Trader from '../core/models/Trader';
+import Logger from '../core/services/Logger';
+import Indicators from '../core/services/Indicators';
 
 export default abstract class Strategy {
     name: string;

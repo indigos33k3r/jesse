@@ -1,4 +1,4 @@
-import Strategy from "../core/models/Strategy";
+import Strategy from "../core/strategies/Strategy";
 
 export interface RouterSymbolsInterface {
     symbol: string; 

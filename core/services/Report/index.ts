@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import config from '../../../config';
 import Order from '../../models/Order';
-import Strategy from '../../models/Strategy';
+import Strategy from '../../strategies/Strategy';
 import store, { selectors } from '../../store';
 import $ from '../Helpers';
 import { MultiValueTableDataInterface, TableDataInterface } from '../Table/types';

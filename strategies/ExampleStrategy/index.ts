@@ -1,4 +1,4 @@
-import Strategy from '../../core/models/Strategy';
+import Strategy from '../../core/strategies/Strategy';
 import store from '../../core/store';
 
 /**

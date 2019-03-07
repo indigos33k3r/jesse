@@ -1,4 +1,4 @@
-import Strategy from "../../models/Strategy";
+import Strategy from "../../strategies/Strategy";
 import store from "../../store";
 import $ from "../../services/Helpers";
 
