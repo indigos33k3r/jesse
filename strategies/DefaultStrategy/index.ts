@@ -4,6 +4,12 @@ import store, { selectors } from '../../core/store';
 import { Sides } from '../../core/store/types';
 import $ from '../../core/services/Helpers';
 import currentPosition from '../../core/services/Positions';
+import Logger from '../../core/services/Logger';
+import HyperParametersInterface from './types';
+
+const defaultHyperParameters: HyperParametersInterface = {
+    minimumPnlPerTradeFilter: 0.8
+};
 
 /**
  * A strategy written to be used at 'backtest.test.ts'.
@@ -15,6 +21,7 @@ import currentPosition from '../../core/services/Positions';
  * @extends {Strategy}
  */
 export default class DefaultStrategy extends Strategy {
+    hyperParameters: HyperParametersInterface;
     shortEMA: number;
     longEMA: number;
     currentCandle: Candle;
@@ -23,10 +30,13 @@ export default class DefaultStrategy extends Strategy {
 
     positionQuantity: number;
     riskPerQty: number;
+    rewardPerQty: number; 
     riskPerCapitalPercentage: number = 1; 
 
-    constructor() {
+    constructor(hyperParameters: HyperParametersInterface = defaultHyperParameters) {
         super('EMA strategy', '0.0.1', 21);
+
+        this.hyperParameters = defaultHyperParameters; 
     }
 
     async update() {
@@ -73,7 +83,15 @@ export default class DefaultStrategy extends Strategy {
         this.buyPrice = this.currentCandle.high + 3 * this.pip;
         this.stopLossPrice = this.previousCandle.low - 3 * this.pip;
         this.riskPerQty = Math.abs(this.buyPrice - this.stopLossPrice);
-        this.takeProfitPrice = this.buyPrice + (this.riskPerQty * 2);
+        this.rewardPerQty = (this.riskPerQty * 2)
+        this.takeProfitPrice = this.buyPrice + this.rewardPerQty;
+
+        // filter trades that don't worth it
+        if ((this.rewardPerQty / this.buyPrice) * 100 < this.hyperParameters.minimumPnlPerTradeFilter) {
+            Logger.warning(`Not worth it. Pass!`);
+            return;
+        }
+
         let positionSize: number = $.riskToSize(
             store.getState().mainReducer.currentBalance,
             this.riskPerCapitalPercentage,
@@ -88,7 +106,15 @@ export default class DefaultStrategy extends Strategy {
         this.sellPrice = this.currentCandle.low - 3 * this.pip;
         this.stopLossPrice = this.previousCandle.high + 3 * this.pip;
         this.riskPerQty = Math.abs(this.sellPrice - this.stopLossPrice);
-        this.takeProfitPrice = this.sellPrice - (this.riskPerQty * 2);
+        this.rewardPerQty = (this.riskPerQty * 2)
+        this.takeProfitPrice = this.sellPrice - this.rewardPerQty;
+
+        // filter trades that don't worth it
+        if ((this.rewardPerQty / this.sellPrice) * 100 < this.hyperParameters.minimumPnlPerTradeFilter) {
+            Logger.warning(`Not worth it. Pass!`);
+            return;
+        }
+
         let positionSize: number = $.riskToSize(
             store.getState().mainReducer.currentBalance,
             this.riskPerCapitalPercentage,
