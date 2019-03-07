@@ -1,4 +1,4 @@
-import Trader from "../models/Trader";
+import Trader from "../services/Trader";
 import store, { actions, selectors } from "../store";
 import Order from "../models/Order";
 import $ from "../services/Helpers";

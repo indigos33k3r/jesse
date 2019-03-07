@@ -1,8 +1,8 @@
-import Order from '../models/Order';
-import api from '../services/API';
-import $ from '../services/Helpers';
-import store from '../store';
-import { orderFlags, Sides } from '../store/types';
+import Order from '../../models/Order';
+import api from '../API';
+import $ from '../Helpers';
+import store from '../../store';
+import { orderFlags, Sides } from '../../store/types';
 
 export default class Trader {
     executedOrdersToImpact: Order[] = []; 

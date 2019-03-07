@@ -1,6 +1,6 @@
 import store, { actions, selectors } from "../store";
 import Order from "../models/Order";
-import Trader from "../models/Trader";
+import Trader from "../services/Trader";
 import Candle from "../models/Candle";
 import config from "../../config";
 import { supportedSymbols, supportedTimeFrames, Sides } from "../store/types";

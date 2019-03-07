@@ -7,7 +7,7 @@ import Trade from '../models/Trade';
 import _ from 'lodash';
 import Event from '../services/Event';
 import EventDataInterface from '../interfaces/EventDataInterface';
-import Trader from '../models/Trader';
+import Trader from '../services/Trader';
 import Logger from '../services/Logger';
 import Indicators from '../services/Indicators';
 
