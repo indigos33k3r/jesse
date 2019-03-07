@@ -3,9 +3,10 @@ import api from '../services/API';
 import $ from '../services/Helpers';
 import store from '../store';
 import { orderFlags, Sides } from '../store/types';
-import jesse from './Jesse';
 
 export default class Trader {
+    executedOrdersToImpact: Order[] = []; 
+
     /**
      * Creates a sell MARKET order. 
      *
@@ -19,7 +20,7 @@ export default class Trader {
         let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.SELL, []);
 
         if (! $.isLiveTrading()) {
-            jesse.executedOrdersToImpact.push(order);
+            this.executedOrdersToImpact.push(order);
         }
 
         return order; 
@@ -48,7 +49,7 @@ export default class Trader {
         let order: Order = await api.marketOrder(store.getState().config.tradingSymbol, Math.abs(quantity), Sides.BUY, []);
 
         if (! $.isLiveTrading()) {
-            jesse.executedOrdersToImpact.push(order);
+            this.executedOrdersToImpact.push(order);
         }
 
         return order;

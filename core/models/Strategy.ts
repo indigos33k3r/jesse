@@ -472,10 +472,7 @@ export default abstract class Strategy {
         try {
             if ($.isBackTesting()) {
                 currentPosition.close(store.getState().mainReducer.entryPrice);
-
-                if ($.isDebugging()) {
-                    Logger.warning(`Finished backTest. Closed the last order at opening price to exclude it from the stats (since it's incomplete, hence being inaccurate).`);
-                }
+                Logger.warning(`Finished backTest. Closed the last order at opening price to exclude it from the stats (since it's incomplete, hence being inaccurate).`);
             }
         } catch (error) {
             Logger.error(error); 

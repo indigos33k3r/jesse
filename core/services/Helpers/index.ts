@@ -200,7 +200,7 @@ const $ = {
             return Math.abs(quantity);
         }
 
-        $.hardError(`side is not supported.`);
+        // $.hardError(`side is not supported.`);
     },
 
     /**
@@ -315,7 +315,7 @@ const $ = {
                 return 0.000025;
 
             default:
-                $.hardError(`A pip value is not available for "${symbol}"`);
+                // $.hardError(`A pip value is not available for "${symbol}"`);
         }
     },
 
@@ -449,7 +449,7 @@ const $ = {
                 symbol
             )
         ) {
-            $.hardError(`Invalid symbol: "${symbol}". Example of accepted values are: "BTCUSD", "ETHUSD"`);
+            // $.hardError(`Invalid symbol: "${symbol}". Example of accepted values are: "BTCUSD", "ETHUSD"`);
         }
     },
 
@@ -505,7 +505,7 @@ const $ = {
                 return TradeTypes.SHORT;
 
             default:
-                $.hardError(`unsupported side: "${side}"`);
+                // $.hardError(`unsupported side: "${side}"`);
         }
     },
 
@@ -517,7 +517,7 @@ const $ = {
                 return Sides.SELL;
 
             default:
-                $.hardError(`unsupported type: "${type}"`);
+                // $.hardError(`unsupported type: "${type}"`);
         }
     }, 
 

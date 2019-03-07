@@ -30,7 +30,6 @@ const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
  */
 export class Jesse {
     strategy: Strategy;
-    executedOrdersToImpact: Order[] = []; 
     
     /**
      * Creates an instance of Jesse.
@@ -113,8 +112,8 @@ export class Jesse {
 
         let that = this; 
 
-        if (this.executedOrdersToImpact.length) {
-            this.executedOrdersToImpact.forEach(async function (order) {
+        if (this.strategy.trader.executedOrdersToImpact.length) {
+            this.strategy.trader.executedOrdersToImpact.forEach(async function (order) {
                 // (fake) broadcast executed order
                 try {
                     await that.strategy.handleExecutedOrder({
@@ -130,7 +129,7 @@ export class Jesse {
                 }
             }); 
 
-            this.executedOrdersToImpact = [];
+            this.strategy.trader.executedOrdersToImpact = [];
         }
     }
 
