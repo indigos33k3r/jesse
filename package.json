@@ -33,16 +33,16 @@
   "author": "Sully Fischer <fischersully@gmail.com>",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "@sentry/node": "^4.4.1",
+    "@sentry/node": "^4.6.4",
     "@types/easy-table": "0.0.32",
-    "@types/lodash": "^4.14.119",
-    "@types/moment-timezone": "^0.5.9",
-    "@types/node": "^10.12.12",
+    "@types/lodash": "^4.14.122",
+    "@types/moment-timezone": "^0.5.11",
+    "@types/node": "^10.12.30",
     "@types/sleep": "0.0.7",
     "@types/ws": "^6.0.1",
     "axios": "^0.18.0",
     "babel-runtime": "^6.26.0",
-    "chalk": "^2.4.1",
+    "chalk": "^2.4.2",
     "cli-progress": "^2.1.1",
     "dotenv": "^6.2.0",
     "easy-table": "^1.1.1",
@@ -54,14 +54,14 @@
     "moment-timezone": "^0.5.23",
     "redux": "^4.0.1",
     "reflect-metadata": "^0.1.13",
-    "sleep": "^5.2.3",
+    "sleep": "^5.2.4",
     "sqlite3": "^4.0.6",
     "ts-node": "^7.0.1",
     "typeorm": "^0.2.14",
-    "typescript": "^3.2.2"
+    "typescript": "^3.3.3333"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^23.3.14",
     "jest": "^24.3.1",
     "ts-jest": "^23.10.5"
   }
