@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import store, { actions } from '../store';
-import { orderStatuses, orderFlags } from '../store/types';
-import $ from '../services/Helpers';
-import Event from '../services/Event';
-import EventDataInterface from '../interfaces/EventDataInterface';
 import { orderTypes } from '../exchanges/Bitfinex/types';
+import EventDataInterface from '../interfaces/EventDataInterface';
+import Event from '../services/Event';
+import $ from '../services/Helpers';
+import store, { actions } from '../store';
+import { orderFlags, orderStatuses } from '../store/types';
 
 interface NewOrderInterface {
     id: number;
@@ -53,12 +53,13 @@ export default class Order {
         this.executedAt = newOrder.executedAt || null; 
         this.canceledAt = newOrder.canceledAt || null; 
     }
-
+    
     cancel() {
         if (this.isCanceled() || this.isExecuted()) return;
         
         store.dispatch(actions.cancelOrder(this.id));
     }
+
     execute() {
         if (this.isExecuted()) return;
 
@@ -73,11 +74,13 @@ export default class Order {
 
         store.dispatch(actions.executeOrder(this.id));
     }
+
     updatePrice(price: number) {
         if (this.price === price) return; 
         
         store.dispatch(actions.updateOrderPrice(this.id, price));
     }
+
     updateQuantity(quantity: number) {
         if (this.quantity === quantity) return; 
 
@@ -87,9 +90,11 @@ export default class Order {
     isActive(): boolean {
         return this.status === orderStatuses.ACTIVE;
     }
+
     isNew(): boolean {
         return this.isActive();
     }
+
     isCanceled(): boolean {
         return this.status === orderStatuses.CANCELED;
     }
@@ -97,9 +102,11 @@ export default class Order {
     isExecuted(): boolean {
         return this.status.startsWith(orderStatuses.EXECUTED);
     }
+
     isFilled(): boolean {
         return this.isExecuted();
     }
+    
     isPartiallyFilled(): boolean {
         return this.status.startsWith(orderStatuses.PARTIALLY_FILLED);
     }
