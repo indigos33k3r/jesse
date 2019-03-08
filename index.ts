@@ -3,12 +3,13 @@ require('dotenv').config();
 
 import _ from 'lodash';
 import readline from 'readline';
+import "reflect-metadata";
 import config from './config';
 import bootstrap from './core/services/Bootstrap';
 import candleSet from './core/services/CandleLoader';
+import Dashboard from './core/services/Dashboard';
 import Notifier from './core/services/Notifier';
 import store, { actions } from './core/store';
-import Dashboard from './core/services/Dashboard';
 
 let executeExit = _.once(function() {
     if (config.notifications.events.liveTradeStopped) {
