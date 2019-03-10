@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 interface NewCandleInterface {
     symbol: string; 
     timeFrame: string; 
@@ -10,6 +12,7 @@ interface NewCandleInterface {
 }
 
 export default class Candle {
+    id: number;
     timestamp: string;
     open: number;
     close: number;
@@ -20,25 +23,14 @@ export default class Candle {
     timeFrame: string; 
 
     constructor(newCandle: NewCandleInterface) {
-        this.timeFrame = newCandle.timeFrame;
-        this.symbol = newCandle.symbol;
-        this.timestamp = newCandle.timestamp;
-        this.open = newCandle.open;
-        this.close = newCandle.close;
-        this.high = newCandle.high;
-        this.low = newCandle.low;
-        this.volume = newCandle.volume;
+        _.forOwn(newCandle, (value, key) => this[key] = value);
     }
 
     isBullish(): boolean {
         return this.close >= this.open; 
     }
+
     isBearish(): boolean {
         return this.close < this.open; 
     }
-
-    // isDogi(): boolean {
-        // TODO 
-    // }
-    // ...other candle types TODO
 }
