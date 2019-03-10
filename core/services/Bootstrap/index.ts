@@ -23,7 +23,7 @@ import Logger from '../Logger';
 const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.legacy);
 
 /**
- * This class does basically everything that Bootstrap Livermore would have wished he could do.
+ * This class does basically everything that Jesse Livermore would have wished he could do.
  *
  * @export
  * @class Bootstrap
