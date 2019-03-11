@@ -1,14 +1,14 @@
 export interface ReduxActionLogInterface {
     type: string; 
-    createdAt: string; 
+    createdAt: number; 
 }
 
 export interface ErrorInterface {
-    time: string;
+    time: number;
     message: string;
 }
 
 export interface WarningInterface {
-    time: string;
+    time: number;
     message: string;
 }

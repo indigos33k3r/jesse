@@ -14,7 +14,7 @@ import { BitfinexError, BitfinexOrder, BitfinexPosition, CandlesChannel, orderTy
 import { getError, getOrderFlags, transformPositionData } from './utilities';
 
 /**
- * To connect to Bitfinex's market via WS connection. Currently supports margin trading only.
+ * To connect to Bitfinex market via WS connection. Currently supports margin trading only.
  *
  * @export
  * @class Bitfinex
@@ -264,7 +264,7 @@ export default class Bitfinex extends Exchange {
             const candle: Candle = new Candle({
                 symbol: channel.symbol,
                 timeFrame: channel.timeFrame,
-                timestamp: $.transformTimestamp(rawCandle[0]),
+                timestamp: rawCandle[0],
                 open: rawCandle[1],
                 close: rawCandle[2],
                 high: rawCandle[3],
@@ -288,7 +288,7 @@ export default class Bitfinex extends Exchange {
                     new Candle({
                         symbol: channel.symbol,
                         timeFrame: channel.timeFrame,
-                        timestamp: $.transformTimestamp(rawCandles[index][0]),
+                        timestamp: rawCandles[index][0],
                         open: rawCandles[index][1],
                         close: rawCandles[index][2],
                         high: rawCandles[index][3],

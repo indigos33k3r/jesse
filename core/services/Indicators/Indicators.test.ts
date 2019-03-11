@@ -4,6 +4,7 @@ import Candle from '../../models/Candle';
 import fakeCandle from '../../models/factories/CandleFactory';
 import store, { actions } from '../../store';
 import { supportedSymbols, supportedTimeFrames } from '../../store/types';
+import $ from '../Helpers';
 
 beforeEach(() => {
     store.dispatch(actions.resetState());
@@ -12,29 +13,29 @@ beforeEach(() => {
 
     // add candles for first symbol 
     const candle1: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.ETHUSD);
-    candle1.timestamp = '2016-10-29T00:00:00Z';
+    candle1.timestamp = $.moment('2016-10-29T00:00:00Z').valueOf();
     candle1.close = 1;
     store.dispatch(actions.addCandle(candle1));
     const candle2: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.ETHUSD);
-    candle2.timestamp = '2016-10-29T00:05:00Z';
+    candle2.timestamp = $.moment('2016-10-29T00:05:00Z').valueOf();
     candle2.close = 2;
     store.dispatch(actions.addCandle(candle2));
     const candle3: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.ETHUSD);
-    candle3.timestamp = '2016-10-29T00:10:00Z';
+    candle3.timestamp = $.moment('2016-10-29T00:10:00Z').valueOf();
     candle3.close = 3;
     store.dispatch(actions.addCandle(candle3));
     
     // add candles for second symbol 
     const candle4: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.BTCUSD);
-    candle4.timestamp = '2016-10-29T00:00:00Z';
+    candle4.timestamp = $.moment('2016-10-29T00:00:00Z').valueOf();
     candle4.close = 4;
     store.dispatch(actions.addCandle(candle4));
     const candle5: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.BTCUSD);
-    candle5.timestamp = '2016-10-29T00:05:00Z';
+    candle5.timestamp = $.moment('2016-10-29T00:05:00Z').valueOf();
     candle5.close = 5;
     store.dispatch(actions.addCandle(candle5));
     const candle6: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.BTCUSD);
-    candle6.timestamp = '2016-10-29T00:10:00Z';
+    candle6.timestamp = $.moment('2016-10-29T00:10:00Z').valueOf();
     candle6.close = 6;
     store.dispatch(actions.addCandle(candle6));
 });
@@ -101,7 +102,7 @@ it('Should return current EMA based on currentPrice and previous EMA', () => {
     expect(indicators.EMA(2)).toEqual(2.5);
 
     const candle4: Candle = fakeCandle(supportedTimeFrames.fiveMinutes, supportedSymbols.ETHUSD);
-    candle4.timestamp = '2016-10-29T00:15:00Z';
+    candle4.timestamp = $.moment('2016-10-29T00:15:00Z').valueOf();
     candle4.close = 4;
     store.dispatch(actions.addCandle(candle4));
 

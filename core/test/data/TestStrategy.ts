@@ -1,9 +1,8 @@
 import Strategy from "../../strategies/Strategy";
 import store from "../../store";
-import $ from "../../services/Helpers";
 
 /**
- * A strategy written to be used at 'backtest.test.ts'.
+ * A strategy written to be used at 'backTest.test.ts'.
  * If you're looking for an example strategy to 
  * copy from, check out 'ExampleStrategy.ts'.
  *
@@ -12,7 +11,7 @@ import $ from "../../services/Helpers";
  * @extends {Strategy}
  */
 export default class TestStrategy extends Strategy {
-    time: string; 
+    time: number; 
     
     constructor(minimumRequiredCandles: number = 0) {
         super('A strategy used for testing', '0.0.1', minimumRequiredCandles);
@@ -30,8 +29,8 @@ export default class TestStrategy extends Strategy {
      * @memberof ExampleStrategy
      */
     shouldBuy(): boolean {
-        if (this.time === $.transformTimestamp(1547200740000)) {
-            return true; 
+        if (this.time === 1547200740000) {
+            return true;
         }
 
         return false; 
@@ -49,7 +48,7 @@ export default class TestStrategy extends Strategy {
      * @memberof ExampleStrategy
      */
     shouldSell(): boolean {
-        if (this.time === $.transformTimestamp(1547203500000)) {
+        if (this.time === 1547203500000) {
             return true;
         }
 

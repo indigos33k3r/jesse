@@ -232,7 +232,7 @@ export class Bootstrap {
      * @memberof Bootstrap
      */
     async runBackTest(candles: Candle[]) {
-        console.time('Executed backtest simulation in');
+        console.time('Executed backTest simulation in');
         
         // progress-bar begins
         if ($.isBackTesting() && !$.isFitting() && !$.isTesting() && !$.isDebugging() && config.logging.items.progressBar) {
@@ -370,10 +370,10 @@ export class Bootstrap {
             if (! $.isTesting()) {
                 let executionTime: number = new Date().valueOf() - store.getState().mainReducer.startTime; 
                 if (executionTime < 10000) {
-                    console.timeEnd('Executed backtest simulation in'); 
+                    console.timeEnd('Executed backTest simulation in'); 
                     console.log('\n');
                 } else {
-                    console.log(`Executed backtest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
+                    console.log(`Executed backTest simulation in: ${$.durationForHuman(executionTime)}`, `\n`);
                 }
             } 
         }

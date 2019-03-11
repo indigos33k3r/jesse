@@ -6,7 +6,7 @@ export interface StateInterface {
     readonly profit: number;
     readonly currentPrice: number;
     readonly conflictingOrdersCount: number;
-    readonly currentTime: string;
+    readonly currentTime: number;
     readonly startTime: number;
     readonly quantity: number;
     readonly entryPrice: number;

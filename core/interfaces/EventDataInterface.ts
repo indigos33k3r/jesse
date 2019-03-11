@@ -1,6 +1,6 @@
 import Order from "../models/Order";
 
 export default interface EventDataInterface {
-    time: string, 
+    time: number, 
     order: Order
 }

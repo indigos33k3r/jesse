@@ -1,14 +1,13 @@
+import config from '../../config';
 import { orderTypes } from '../exchanges/Bitfinex/types';
-import testingCandles from './data/candles';
-import TestStrategy from './data/TestStrategy';
-import store, { actions } from '../store';
-import { supportedSymbols, TradeTypes, Sides, orderStatuses } from '../store/types';
 import Candle from '../models/Candle';
-import { Bootstrap } from '../services/Bootstrap';
 import Order from '../models/Order';
 import Trade from '../models/Trade';
-import config from '../../config';
-import $ from '../services/Helpers';
+import { Bootstrap } from '../services/Bootstrap';
+import store, { actions } from '../store';
+import { orderStatuses, Sides, supportedSymbols, TradeTypes } from '../store/types';
+import testingCandles from './data/candles';
+import TestStrategy from './data/TestStrategy';
 
 beforeEach(() => {
     store.dispatch(actions.resetState());
@@ -54,35 +53,35 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
         quantity: 10.2041,
         fee: 0,
         orders: [
-            // open position 
+            // open position
             new Order({
                 id: orders[0].id,
-                flag: null, 
+                flag: null,
                 symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 129.33,
                 quantity: 10.2041,
                 side: Sides.BUY,
                 status: orderStatuses.EXECUTED,
-                createdAt: $.transformTimestamp(1547200740000), 
-                executedAt: $.transformTimestamp(1547201100000)
+                createdAt: 1547200740000,
+                executedAt: 1547201100000
             }),
             // close position with a STOP order
             new Order({
                 id: orders[1].id,
-                flag: null, 
+                flag: null,
                 symbol: config.app.symbolToTrade,
                 type: orderTypes.STOP,
                 price: 128.35,
                 quantity: -10.2041,
                 side: Sides.SELL,
                 status: orderStatuses.EXECUTED,
-                createdAt: $.transformTimestamp(1547201100000), 
-                executedAt: $.transformTimestamp(1547202840000), 
-            }), 
+                createdAt: 1547201100000,
+                executedAt: 1547202840000
+            })
         ],
-        openedAt: $.transformTimestamp(1547201100000),
-        closedAt: $.transformTimestamp(1547202840000)
+        openedAt: 1547201100000,
+        closedAt: 1547202840000
     });
 
     const expectedTrade2: Trade = new Trade({
@@ -98,35 +97,35 @@ it('Should run a simple backTest making 2 trades via LIMIT orders', async () => 
         quantity: 10,
         fee: 0,
         orders: [
-            // open position 
+            // open position
             new Order({
                 id: orders[3].id,
-                flag: null, 
+                flag: null,
                 symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 128.05,
                 quantity: -10,
                 side: Sides.SELL,
                 status: orderStatuses.EXECUTED,
-                createdAt: $.transformTimestamp(1547203500000), 
-                executedAt: $.transformTimestamp(1547203560000), 
+                createdAt: 1547203500000,
+                executedAt: 1547203560000
             }),
-            // takeProfitOrder gets filled 
+            // takeProfitOrder gets filled
             new Order({
                 id: orders[5].id,
-                flag: null, 
+                flag: null,
                 symbol: config.app.symbolToTrade,
                 type: orderTypes.LIMIT,
                 price: 126.58,
                 quantity: 10,
                 side: Sides.BUY,
                 status: orderStatuses.EXECUTED,
-                createdAt: $.transformTimestamp(1547203560000),
-                executedAt: $.transformTimestamp(1547203740000)
+                createdAt: 1547203560000,
+                executedAt: 1547203740000
             })
         ],
-        openedAt: $.transformTimestamp(1547203560000),
-        closedAt: $.transformTimestamp(1547203740000)
+        openedAt: 1547203560000,
+        closedAt: 1547203740000
     });
 
     expect(store.getState().trades.length).toBe(2);

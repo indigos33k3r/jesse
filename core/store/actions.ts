@@ -46,7 +46,7 @@ export function reduceCurrentBalance(balance: number): ActionInterface {
         type: types.REDUCE_CURRENT_BALANCE
     };
 }
-export function updateCurrentTime(time: string): ActionInterface {
+export function updateCurrentTime(time: number): ActionInterface {
     return {
         type: types.UPDATE_CURRENT_TIME,
         payload: time

@@ -16,10 +16,10 @@ interface NewOrderInterface {
     price: number;
     trailingPrice?: number;
     status: string;
-    updatedAt?: string; 
-    createdAt?: string; 
-    executedAt?: string; 
-    canceledAt?: string; 
+    updatedAt?: number; 
+    createdAt?: number; 
+    executedAt?: number; 
+    canceledAt?: number; 
 }
 
 export default class Order {
@@ -32,10 +32,10 @@ export default class Order {
     readonly price: number;
     readonly trailingPrice: number;
     readonly status: string;
-    readonly createdAt: string; 
-    readonly updatedAt: string; 
-    readonly executedAt: string; 
-    readonly canceledAt: string; 
+    readonly createdAt: number; 
+    readonly updatedAt: number; 
+    readonly executedAt: number; 
+    readonly canceledAt: number; 
 
     constructor(newOrder: NewOrderInterface) {
         this.id = newOrder.id;

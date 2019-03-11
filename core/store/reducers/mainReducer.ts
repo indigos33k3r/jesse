@@ -10,7 +10,7 @@ export const initialState: StateInterface = {
     sessionID: $.generateUniqueID(),
 
     currentPrice: 0,
-    currentTime: '',
+    currentTime: null,
     currentBalance: config.app.startingBalance,
     startingBalance: config.app.startingBalance,
     conflictingOrdersCount: 0,

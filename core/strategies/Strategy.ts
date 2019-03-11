@@ -488,7 +488,7 @@ export default abstract class Strategy {
      * @param {string} [description]
      * @memberof Strategy
      */
-    log(time: string, order: Order, logType: string) {
+    log(time: number, order: Order, logType: string) {
         // TODO: if reduce is causing the position to close, 
         // change it to close
 

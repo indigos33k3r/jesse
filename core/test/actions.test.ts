@@ -1,4 +1,3 @@
-import moment from 'moment-timezone';
 import Order from '../models/Order';
 import store, { actions } from '../store';
 import { ActionTypes } from '../store/types';
@@ -46,9 +45,9 @@ it('Should create an action to reduce balance', () => {
     });
 });
 it('Should create an action to currentTime', () => {
-    expect(actions.updateCurrentTime('2016-10-30T03:00:00Z')).toEqual({
+    expect(actions.updateCurrentTime($.moment('2016-10-30T03:00:00Z').valueOf())).toEqual({
         type: ActionTypes.UPDATE_CURRENT_TIME,
-        payload: '2016-10-30T03:00:00Z'
+        payload: $.moment('2016-10-30T03:00:00Z').valueOf()
     });
 });
 it('Should create an action to currentPrice', () => {
@@ -78,18 +77,16 @@ it('Should create an action to add CandleSetTimeFrame', () => {
     });
 });
 it('Should create an action to add candle', () => {
-    const candle: Candle = new Candle(
-        {
-            symbol: 'BTCUSD',
-            timeFrame: '1m',  
-            timestamp: moment(1543387200000).format(),
-            open: 117.31,
-            close: 117.27,
-            high: 117.31,
-            low: 117.17,
-            volume: 195.88077825
-        }
-    );
+    const candle: Candle = new Candle({
+        symbol: 'BTCUSD',
+        timeFrame: '1m',
+        timestamp: 1543387200000,
+        open: 117.31,
+        close: 117.27,
+        high: 117.31,
+        low: 117.17,
+        volume: 195.88077825
+    });
 
     expect(actions.addCandle(candle)).toEqual({
         type: ActionTypes.ADD_CANDLE, 
@@ -98,30 +95,26 @@ it('Should create an action to add candle', () => {
 });
 it('Should create an action to BATCH add candle', () => {
     const candles: Candle[] = [
-        new Candle(
-            {
-                symbol: 'BTCUSD',
-                timeFrame: '1m',  
-                timestamp: moment(1543387200000).format(),
-                open: 117.31,
-                close: 117.27,
-                high: 117.31,
-                low: 117.17,
-                volume: 195.88077825
-            }
-        ), 
-        new Candle(
-            {
-                symbol: 'BTCUSD',
-                timeFrame: '1m',  
-                timestamp: moment(1543387260000).format(),
-                open: 117.31,
-                close: 118.27,
-                high: 118.31,
-                low: 117.17,
-                volume: 295.88077825
-            }
-        )
+        new Candle({
+            symbol: 'BTCUSD',
+            timeFrame: '1m',
+            timestamp: 1543387200000,
+            open: 117.31,
+            close: 117.27,
+            high: 117.31,
+            low: 117.17,
+            volume: 195.88077825
+        }),
+        new Candle({
+            symbol: 'BTCUSD',
+            timeFrame: '1m',
+            timestamp: 1543387260000,
+            open: 117.31,
+            close: 118.27,
+            high: 118.31,
+            low: 117.17,
+            volume: 295.88077825
+        })
     ];
 
     expect(actions.batchAddCandles(candles)).toEqual({

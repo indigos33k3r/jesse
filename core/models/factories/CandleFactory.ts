@@ -14,13 +14,13 @@ export default function fakeCandle(
     const volume: number = _.random(1, 100);
 
     return new Candle({
-        open, 
+        open,
         close,
         high,
         low,
-        symbol, 
-        timeFrame, 
-        timestamp: $.transformTimestamp(Date.now()), 
+        symbol,
+        timeFrame,
+        timestamp: Date.now(),
         volume
     });
 }

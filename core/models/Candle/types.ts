@@ -1,7 +1,7 @@
 export default interface NewCandleInterface {
     symbol: string;
     timeFrame: string;
-    timestamp: string;
+    timestamp: number;
     open: number;
     close: number;
     high: number;

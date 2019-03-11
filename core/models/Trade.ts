@@ -23,8 +23,8 @@ export default class Trade {
     quantity: number; 
     fee: number; 
     orders: Order[];
-    openedAt: string;
-    closedAt: string; 
+    openedAt: number;
+    closedAt: number; 
 
     /**
      * Creates an instance of Trade.

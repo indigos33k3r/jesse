@@ -1,6 +1,5 @@
 import Candle from "../../models/Candle";
 import { supportedSymbols, supportedTimeFrames } from "../../store/types";
-import $ from "../../services/Helpers";
 
 // sample prices include 55 1m candles from ETH traded on 
 // Bitfinex in "11 Jan 2019 09:55 - 11 Jan 2019 10:50" 
@@ -68,7 +67,7 @@ const testingCandles: Candle[] = [];
 for (let index = 0; index < rawCandles.length; index++) {
     testingCandles.push(
         new Candle({
-            timestamp: $.transformTimestamp(rawCandles[index][0]),
+            timestamp: rawCandles[index][0],
             open: rawCandles[index][1],
             close: rawCandles[index][2],
             high: rawCandles[index][3],

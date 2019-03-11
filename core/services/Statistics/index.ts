@@ -5,6 +5,7 @@ import Candle from '../../models/Candle';
 import Trade from '../../models/Trade';
 import store from '../../store';
 import { TableDataInterface } from '../Table/types';
+import $ from '../Helpers';
 moment.tz.setDefault('UTC');
 
 const Statistics = {
@@ -19,7 +20,7 @@ const Statistics = {
                 key: 'time period',
                 value: `${moment
                     .duration(moment(candles[0].timestamp).diff(moment(candles[candles.length - 1].timestamp)))
-                    .humanize()} (${candles[0].timestamp} => ${candles[candles.length - 1].timestamp})`
+                    .humanize()} (${$.transformTimestamp(candles[0].timestamp)} => ${$.transformTimestamp(candles[candles.length - 1].timestamp)})`
             },
             {
                 key: 'price change:',

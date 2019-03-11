@@ -14,7 +14,7 @@ it('should add candle. Should add if new, update if already exists', () => {
     const candle: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: '1m',
-        timestamp: $.transformTimestamp(1543387200000),
+        timestamp: 1543387200000,
         open: 117.31,
         close: 117.27,
         high: 117.31,
@@ -55,7 +55,7 @@ it('should add candle. Should add if new, update if already exists', () => {
     const updatedCandle: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: '1m',
-        timestamp: $.transformTimestamp(1543387200000),
+        timestamp: 1543387200000,
         open: 117.31,
         close: 127.27,
         high: 127.31,
@@ -80,7 +80,7 @@ it('should add candle. Should add if new, update if already exists', () => {
     const newCandleForTheSameTimeFrame: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: '1m',
-        timestamp: $.transformTimestamp(1543387260000),
+        timestamp: 1543387260000,
         open: 117.31,
         close: 127.27,
         high: 127.31,
@@ -106,7 +106,7 @@ it('should add candle. Should add if new, update if already exists', () => {
     const newTimeFrameCandle: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: '5m',
-        timestamp: $.transformTimestamp(1543387260000),
+        timestamp: 1543387260000,
         open: 117.31,
         close: 127.27,
         high: 127.31,
@@ -136,7 +136,7 @@ it('should add candle. Should add if new, update if already exists', () => {
     const newSymbolCandle: Candle = new Candle({
         symbol: 'ETHUSD',
         timeFrame: '5m',
-        timestamp: $.transformTimestamp(1543387260000),
+        timestamp: 1543387260000,
         open: 117.31,
         close: 127.27,
         high: 127.31,
@@ -179,7 +179,7 @@ it('should batch add candles. Should add if new, update if already exists', () =
     const candle1: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: supportedTimeFrames.oneMinute,
-        timestamp: $.transformTimestamp(1543387200000),
+        timestamp: 1543387200000,
         open: 117.31,
         close: 117.27,
         high: 117.31,
@@ -189,7 +189,7 @@ it('should batch add candles. Should add if new, update if already exists', () =
     const candle2: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: supportedTimeFrames.oneMinute,
-        timestamp: $.transformTimestamp(1543387200000 + 60000),
+        timestamp: 1543387200000 + 60000,
         open: 117.31,
         close: 117.27,
         high: 117.31,
@@ -199,7 +199,7 @@ it('should batch add candles. Should add if new, update if already exists', () =
     const candle3: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: supportedTimeFrames.oneMinute,
-        timestamp: $.transformTimestamp(1543387200000 + 60000 + 60000),
+        timestamp: 1543387200000 + 60000 + 60000,
         open: 117.31,
         close: 117.27,
         high: 117.31,
@@ -226,7 +226,7 @@ it('should batch add candles. Should add if new, update if already exists', () =
     const candle4: Candle = new Candle({
         symbol: supportedSymbols.BTCUSD,
         timeFrame: '1m',
-        timestamp: $.transformTimestamp(1543387200000 + 3 * 60000),
+        timestamp: 1543387200000 + 3 * 60000,
         open: 117.31,
         close: 117.27,
         high: 117.31,

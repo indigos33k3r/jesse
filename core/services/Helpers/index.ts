@@ -20,7 +20,7 @@ const $ = {
         return Math.floor(duration.asHours()) + moment.utc(duration.asMilliseconds()).format(':mm:ss');
     },
 
-    date(date: string): string {
+    date(date: number): string {
         return moment(date).format('YYYY-MM-DD');
     },
 
@@ -266,8 +266,12 @@ const $ = {
         );
     },
 
-    now(): string {
-        return moment().format();
+    now(): number {
+        if (config.app.isTesting) {
+            return 1552309186171;
+        }
+
+        return moment().valueOf();
     },
 
     transformTimestamp(timestamp: number): string {
@@ -479,7 +483,7 @@ const $ = {
     },
 
     /**
-     * The opposite of Lodash's isUndifined().
+     * The opposite of Lodash isUndefined().
      *
      * @param {*} data
      * @returns {boolean}
